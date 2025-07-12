@@ -1,0 +1,8 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'relapse_dao.dart';
+
+// ignore_for_file: type=lint
+mixin _$RelapseDaoMixin on DatabaseAccessor<AppDatabase> {
+  $RelapseTableTable get relapseTable => attachedDatabase.relapseTable;
+}

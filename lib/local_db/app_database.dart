@@ -1,0 +1,28 @@
+import 'dart:io';
+
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:handbrake/local_db/dao/relapse_dao.dart';
+import 'package:handbrake/local_db/tables/relapse_table.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+part 'app_database.g.dart';
+
+@DriftDatabase(tables: [RelapseTable])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  RelapseDao get relapseDao => RelapseDao(this);
+}
+
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(p.join(dbFolder.path, 'noti.sqlite'));
+    return NativeDatabase(file);
+  });
+}
