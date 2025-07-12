@@ -2,29 +2,31 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:handbrake/local_db/app_database.dart';
-import 'package:handbrake/local_db/tables/relapse_table.dart';
+import 'package:handbrake/local_db/tables/relapses.dart';
 part 'relapse_dao.g.dart';
 
-@DriftAccessor(tables: [RelapseTable])
+@DriftAccessor(tables: [Relapses])
 class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
   RelapseDao(super.db);
 
-  Future<bool> insertRelapse(RelapseTableCompanion product) async {
+  Future<Relapse?> insertRelapse(RelapsesCompanion relapse) async {
     try {
-      into(relapseTable).insert(product);
-      return true;
+      final id = await into(relapses).insert(relapse);
+      return (await (select(
+        relapses,
+      )..where((tbl) => tbl.id.equals(id))).getSingle());
     } on SqliteException catch (e) {
       debugPrint('sqlite error : ${e.message}');
-      return false;
+      return null;
     } catch (e) {
       debugPrint('unknown error occured : $e');
-      return false;
+      return null;
     }
   }
 
-  Future<List<RelapseTableData>> getAllRelapses() async {
+  Future<List<Relapse>> getAllRelapses() async {
     try {
-      final products = await select(relapseTable).get();
+      final products = await select(relapses).get();
       return products;
     } on SqliteException catch (e) {
       print('SQLite Error: ${e.message}');
@@ -35,10 +37,10 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
     }
   }
 
-  Future<RelapseTableData?> getRelapseById(int id) async {
+  Future<Relapse?> getRelapseById(int id) async {
     try {
       final relapse = await (select(
-        relapseTable,
+        relapses,
       )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
       return relapse; // Could be null if not found, or a product
     } on SqliteException catch (e) {

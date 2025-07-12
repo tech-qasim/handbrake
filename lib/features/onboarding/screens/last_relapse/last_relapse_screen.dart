@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
+import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';
 
@@ -11,6 +13,7 @@ class LastRelapseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final relapseDateTime = context.watch<HomeCubit>().state.lastRelapseDate;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -41,18 +44,21 @@ class LastRelapseScreen extends StatelessWidget {
                 child: CupertinoDatePicker(
                   initialDateTime: DateTime.now(),
                   mode: CupertinoDatePickerMode.date,
-                  use24hFormat: true,
-                  // This shows day of week alongside day of month
                   showDayOfWeek: true,
-                  // This is called when the user changes the date.
-                  onDateTimeChanged: (DateTime newDate) {},
+                  onDateTimeChanged: (DateTime newDate) {
+                    context.read<HomeCubit>().changeLastRelapseDate(newDate);
+                  },
                 ),
               ),
 
               const Spacer(),
 
               AppCustomButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<HomeCubit>().addRelapseOnOnboarding(
+                    relapseDateTime,
+                  );
+                },
                 buttonText: 'Let\'s Go',
                 isFullWidth: true,
               ),

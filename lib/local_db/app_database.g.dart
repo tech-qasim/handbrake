@@ -3,12 +3,11 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $RelapseTableTable extends RelapseTable
-    with TableInfo<$RelapseTableTable, RelapseTableData> {
+class $RelapsesTable extends Relapses with TableInfo<$RelapsesTable, Relapse> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $RelapseTableTable(this.attachedDatabase, [this._alias]);
+  $RelapsesTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -50,10 +49,10 @@ class $RelapseTableTable extends RelapseTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'relapse_table';
+  static const String $name = 'relapses';
   @override
   VerificationContext validateIntegrity(
-    Insertable<RelapseTableData> instance, {
+    Insertable<Relapse> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -84,9 +83,9 @@ class $RelapseTableTable extends RelapseTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  RelapseTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Relapse map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return RelapseTableData(
+    return Relapse(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -103,21 +102,16 @@ class $RelapseTableTable extends RelapseTable
   }
 
   @override
-  $RelapseTableTable createAlias(String alias) {
-    return $RelapseTableTable(attachedDatabase, alias);
+  $RelapsesTable createAlias(String alias) {
+    return $RelapsesTable(attachedDatabase, alias);
   }
 }
 
-class RelapseTableData extends DataClass
-    implements Insertable<RelapseTableData> {
+class Relapse extends DataClass implements Insertable<Relapse> {
   final int id;
   final DateTime relapseTime;
   final String? trigger;
-  const RelapseTableData({
-    required this.id,
-    required this.relapseTime,
-    this.trigger,
-  });
+  const Relapse({required this.id, required this.relapseTime, this.trigger});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -129,8 +123,8 @@ class RelapseTableData extends DataClass
     return map;
   }
 
-  RelapseTableCompanion toCompanion(bool nullToAbsent) {
-    return RelapseTableCompanion(
+  RelapsesCompanion toCompanion(bool nullToAbsent) {
+    return RelapsesCompanion(
       id: Value(id),
       relapseTime: Value(relapseTime),
       trigger: trigger == null && nullToAbsent
@@ -139,12 +133,12 @@ class RelapseTableData extends DataClass
     );
   }
 
-  factory RelapseTableData.fromJson(
+  factory Relapse.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return RelapseTableData(
+    return Relapse(
       id: serializer.fromJson<int>(json['id']),
       relapseTime: serializer.fromJson<DateTime>(json['relapseTime']),
       trigger: serializer.fromJson<String?>(json['trigger']),
@@ -160,17 +154,17 @@ class RelapseTableData extends DataClass
     };
   }
 
-  RelapseTableData copyWith({
+  Relapse copyWith({
     int? id,
     DateTime? relapseTime,
     Value<String?> trigger = const Value.absent(),
-  }) => RelapseTableData(
+  }) => Relapse(
     id: id ?? this.id,
     relapseTime: relapseTime ?? this.relapseTime,
     trigger: trigger.present ? trigger.value : this.trigger,
   );
-  RelapseTableData copyWithCompanion(RelapseTableCompanion data) {
-    return RelapseTableData(
+  Relapse copyWithCompanion(RelapsesCompanion data) {
+    return Relapse(
       id: data.id.present ? data.id.value : this.id,
       relapseTime: data.relapseTime.present
           ? data.relapseTime.value
@@ -181,7 +175,7 @@ class RelapseTableData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('RelapseTableData(')
+    return (StringBuffer('Relapse(')
           ..write('id: $id, ')
           ..write('relapseTime: $relapseTime, ')
           ..write('trigger: $trigger')
@@ -194,27 +188,27 @@ class RelapseTableData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is RelapseTableData &&
+      (other is Relapse &&
           other.id == this.id &&
           other.relapseTime == this.relapseTime &&
           other.trigger == this.trigger);
 }
 
-class RelapseTableCompanion extends UpdateCompanion<RelapseTableData> {
+class RelapsesCompanion extends UpdateCompanion<Relapse> {
   final Value<int> id;
   final Value<DateTime> relapseTime;
   final Value<String?> trigger;
-  const RelapseTableCompanion({
+  const RelapsesCompanion({
     this.id = const Value.absent(),
     this.relapseTime = const Value.absent(),
     this.trigger = const Value.absent(),
   });
-  RelapseTableCompanion.insert({
+  RelapsesCompanion.insert({
     this.id = const Value.absent(),
     required DateTime relapseTime,
     this.trigger = const Value.absent(),
   }) : relapseTime = Value(relapseTime);
-  static Insertable<RelapseTableData> custom({
+  static Insertable<Relapse> custom({
     Expression<int>? id,
     Expression<DateTime>? relapseTime,
     Expression<String>? trigger,
@@ -226,12 +220,12 @@ class RelapseTableCompanion extends UpdateCompanion<RelapseTableData> {
     });
   }
 
-  RelapseTableCompanion copyWith({
+  RelapsesCompanion copyWith({
     Value<int>? id,
     Value<DateTime>? relapseTime,
     Value<String?>? trigger,
   }) {
-    return RelapseTableCompanion(
+    return RelapsesCompanion(
       id: id ?? this.id,
       relapseTime: relapseTime ?? this.relapseTime,
       trigger: trigger ?? this.trigger,
@@ -255,7 +249,7 @@ class RelapseTableCompanion extends UpdateCompanion<RelapseTableData> {
 
   @override
   String toString() {
-    return (StringBuffer('RelapseTableCompanion(')
+    return (StringBuffer('RelapsesCompanion(')
           ..write('id: $id, ')
           ..write('relapseTime: $relapseTime, ')
           ..write('trigger: $trigger')
@@ -267,30 +261,30 @@ class RelapseTableCompanion extends UpdateCompanion<RelapseTableData> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $RelapseTableTable relapseTable = $RelapseTableTable(this);
+  late final $RelapsesTable relapses = $RelapsesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [relapseTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [relapses];
 }
 
-typedef $$RelapseTableTableCreateCompanionBuilder =
-    RelapseTableCompanion Function({
+typedef $$RelapsesTableCreateCompanionBuilder =
+    RelapsesCompanion Function({
       Value<int> id,
       required DateTime relapseTime,
       Value<String?> trigger,
     });
-typedef $$RelapseTableTableUpdateCompanionBuilder =
-    RelapseTableCompanion Function({
+typedef $$RelapsesTableUpdateCompanionBuilder =
+    RelapsesCompanion Function({
       Value<int> id,
       Value<DateTime> relapseTime,
       Value<String?> trigger,
     });
 
-class $$RelapseTableTableFilterComposer
-    extends Composer<_$AppDatabase, $RelapseTableTable> {
-  $$RelapseTableTableFilterComposer({
+class $$RelapsesTableFilterComposer
+    extends Composer<_$AppDatabase, $RelapsesTable> {
+  $$RelapsesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -313,9 +307,9 @@ class $$RelapseTableTableFilterComposer
   );
 }
 
-class $$RelapseTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $RelapseTableTable> {
-  $$RelapseTableTableOrderingComposer({
+class $$RelapsesTableOrderingComposer
+    extends Composer<_$AppDatabase, $RelapsesTable> {
+  $$RelapsesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -338,9 +332,9 @@ class $$RelapseTableTableOrderingComposer
   );
 }
 
-class $$RelapseTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $RelapseTableTable> {
-  $$RelapseTableTableAnnotationComposer({
+class $$RelapsesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RelapsesTable> {
+  $$RelapsesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -359,41 +353,38 @@ class $$RelapseTableTableAnnotationComposer
       $composableBuilder(column: $table.trigger, builder: (column) => column);
 }
 
-class $$RelapseTableTableTableManager
+class $$RelapsesTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $RelapseTableTable,
-          RelapseTableData,
-          $$RelapseTableTableFilterComposer,
-          $$RelapseTableTableOrderingComposer,
-          $$RelapseTableTableAnnotationComposer,
-          $$RelapseTableTableCreateCompanionBuilder,
-          $$RelapseTableTableUpdateCompanionBuilder,
-          (
-            RelapseTableData,
-            BaseReferences<_$AppDatabase, $RelapseTableTable, RelapseTableData>,
-          ),
-          RelapseTableData,
+          $RelapsesTable,
+          Relapse,
+          $$RelapsesTableFilterComposer,
+          $$RelapsesTableOrderingComposer,
+          $$RelapsesTableAnnotationComposer,
+          $$RelapsesTableCreateCompanionBuilder,
+          $$RelapsesTableUpdateCompanionBuilder,
+          (Relapse, BaseReferences<_$AppDatabase, $RelapsesTable, Relapse>),
+          Relapse,
           PrefetchHooks Function()
         > {
-  $$RelapseTableTableTableManager(_$AppDatabase db, $RelapseTableTable table)
+  $$RelapsesTableTableManager(_$AppDatabase db, $RelapsesTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$RelapseTableTableFilterComposer($db: db, $table: table),
+              $$RelapsesTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$RelapseTableTableOrderingComposer($db: db, $table: table),
+              $$RelapsesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$RelapseTableTableAnnotationComposer($db: db, $table: table),
+              $$RelapsesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> relapseTime = const Value.absent(),
                 Value<String?> trigger = const Value.absent(),
-              }) => RelapseTableCompanion(
+              }) => RelapsesCompanion(
                 id: id,
                 relapseTime: relapseTime,
                 trigger: trigger,
@@ -403,7 +394,7 @@ class $$RelapseTableTableTableManager
                 Value<int> id = const Value.absent(),
                 required DateTime relapseTime,
                 Value<String?> trigger = const Value.absent(),
-              }) => RelapseTableCompanion.insert(
+              }) => RelapsesCompanion.insert(
                 id: id,
                 relapseTime: relapseTime,
                 trigger: trigger,
@@ -416,27 +407,24 @@ class $$RelapseTableTableTableManager
       );
 }
 
-typedef $$RelapseTableTableProcessedTableManager =
+typedef $$RelapsesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $RelapseTableTable,
-      RelapseTableData,
-      $$RelapseTableTableFilterComposer,
-      $$RelapseTableTableOrderingComposer,
-      $$RelapseTableTableAnnotationComposer,
-      $$RelapseTableTableCreateCompanionBuilder,
-      $$RelapseTableTableUpdateCompanionBuilder,
-      (
-        RelapseTableData,
-        BaseReferences<_$AppDatabase, $RelapseTableTable, RelapseTableData>,
-      ),
-      RelapseTableData,
+      $RelapsesTable,
+      Relapse,
+      $$RelapsesTableFilterComposer,
+      $$RelapsesTableOrderingComposer,
+      $$RelapsesTableAnnotationComposer,
+      $$RelapsesTableCreateCompanionBuilder,
+      $$RelapsesTableUpdateCompanionBuilder,
+      (Relapse, BaseReferences<_$AppDatabase, $RelapsesTable, Relapse>),
+      Relapse,
       PrefetchHooks Function()
     >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$RelapseTableTableTableManager get relapseTable =>
-      $$RelapseTableTableTableManager(_db, _db.relapseTable);
+  $$RelapsesTableTableManager get relapses =>
+      $$RelapsesTableTableManager(_db, _db.relapses);
 }

@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:handbrake/local_db/dao/relapse_dao.dart';
-import 'package:handbrake/local_db/tables/relapse_table.dart';
+import 'package:handbrake/local_db/tables/relapses.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [RelapseTable])
+@DriftDatabase(tables: [Relapses])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
