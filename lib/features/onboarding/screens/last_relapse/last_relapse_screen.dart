@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
+import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';
 
@@ -31,9 +32,7 @@ class LastRelapseScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: context.textTheme.displayLarge?.copyWith(fontSize: 16),
               ),
-
               const SizedBox(height: 40),
-
               Container(
                 height: 200,
                 width: double.infinity,
@@ -58,6 +57,8 @@ class LastRelapseScreen extends StatelessWidget {
                   context.read<HomeCubit>().addRelapseOnOnboarding(
                     relapseDateTime,
                   );
+
+                  context.router.replace(const NavigationRoute());
                 },
                 buttonText: 'Let\'s Go',
                 isFullWidth: true,

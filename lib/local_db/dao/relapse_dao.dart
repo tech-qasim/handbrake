@@ -52,6 +52,23 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
     }
   }
 
+  Future<Relapse?> getLastRelapse() async {
+    try {
+      final relapse =
+          await (select(relapses)
+                ..orderBy([(tbl) => OrderingTerm.desc(tbl.id)])
+                ..limit(1))
+              .getSingleOrNull();
+      return relapse;
+    } on SqliteException catch (e) {
+      debugPrint('SQLite Error while fetching last relapse: ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      return null;
+    }
+  }
+
   // Future<bool> updateProduct(Product product) =>
   //     update(productTable).replace(product.toCompanion());
 

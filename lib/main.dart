@@ -7,9 +7,9 @@ import 'package:handbrake/theme/app_theme.dart';
 import 'package:handbrake/theme/theme_mode_cubit.dart';
 import 'package:handbrake/utils/di.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setUpDependencyInjector();
+  await setUpDependencyInjector();
   runApp(MyApp());
 }
 

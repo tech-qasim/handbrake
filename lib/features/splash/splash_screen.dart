@@ -8,13 +8,14 @@ import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+@RoutePage()
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return FlutterSplashScreen.fadeIn(
-      backgroundColor: AppColors.primaryColor,
+      backgroundColor: AppColors.whiteColor,
       childWidget: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -43,11 +44,11 @@ class SplashScreen extends StatelessWidget {
         final isUserOnboarded = getIt<SharedPreferences>().getBool(
           SharedPrefStrings.isUserOnboarded,
         );
-
+        await Future.delayed(const Duration(seconds: 2));
         if (isUserOnboarded ?? false) {
-          context.router.replace(const NavigationRoute());
+          context.router.push(const NavigationRoute());
         } else {
-          context.router.replace(const IntroRoute());
+          context.router.push(const IntroRoute());
         }
       },
       useImmersiveMode: false,
