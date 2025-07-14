@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
+import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';
 
 @RoutePage()
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class CounterScreen extends StatefulWidget {
+  const CounterScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<CounterScreen> createState() => _CounterScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _CounterScreenState extends State<CounterScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               AppCustomButton(
                 onPressed: () {
-                  context.read<HomeCubit>().addRelapse(DateTime.now());
+                  context.router.push(const RelapseLogRoute());
                 },
                 buttonText: 'Relapse',
                 isFullWidth: true,

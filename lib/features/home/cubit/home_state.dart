@@ -8,12 +8,18 @@ class HomeState {
   int soberCount;
   Timer? timer;
   Duration soberTime;
+  String? selectedTriggerChip;
+  String? selectedEmotionChip;
+  double urgeIntensity;
   HomeState({
     required this.relapses,
     required this.lastRelapseDate,
     required this.soberCount,
     required this.timer,
     required this.soberTime,
+    required this.selectedTriggerChip,
+    this.selectedEmotionChip,
+    required this.urgeIntensity,
   });
   factory HomeState.initial() {
     return HomeState(
@@ -22,6 +28,9 @@ class HomeState {
       soberCount: 0,
       timer: null,
       soberTime: Duration.zero,
+      selectedTriggerChip: null,
+      selectedEmotionChip: null,
+      urgeIntensity: 1,
     );
   }
 
@@ -31,6 +40,9 @@ class HomeState {
     int? soberCount,
     Timer? timer,
     Duration? soberTime,
+    String? selectedTriggerChip,
+    String? selectedEmotionChip,
+    double? urgeIntensity,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
@@ -38,6 +50,9 @@ class HomeState {
       soberCount: soberCount ?? this.soberCount,
       timer: timer ?? this.timer,
       soberTime: soberTime ?? this.soberTime,
+      selectedTriggerChip: selectedTriggerChip ?? this.selectedTriggerChip,
+      selectedEmotionChip: selectedEmotionChip ?? this.selectedEmotionChip,
+      urgeIntensity: urgeIntensity ?? this.urgeIntensity,
     );
   }
 }

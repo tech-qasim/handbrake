@@ -10,4 +10,5 @@ class AppColors {
   static const transparentColor = Colors.transparent;
   static const datePickerBgColor = Color(0xffF5F5F5);
   static const timeBgColor = Color(0xffE8F2F0);
+  static const textfieldBgColor = Color(0xffF0F2F5);
 }

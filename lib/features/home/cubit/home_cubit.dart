@@ -84,4 +84,16 @@ class HomeCubit extends Cubit<HomeState> {
   void setSoberTime(Duration soberTime) {
     emit(state.copyWith(soberTime: soberTime));
   }
+
+  void setTriggerChip(String trigger) {
+    emit(state.copyWith(selectedTriggerChip: trigger));
+  }
+
+  void setEmotionChip(String emotion) {
+    emit(state.copyWith(selectedEmotionChip: emotion));
+  }
+
+  void setUrgeIntensity(double val) {
+    emit(state.copyWith(urgeIntensity: val));
+  }
 }

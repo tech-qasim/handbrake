@@ -12,7 +12,7 @@ class NavigationScreen extends StatelessWidget {
     return AutoTabsRouter(
       navigatorObservers: () => [HeroController()],
       routes: [
-        const HomeRoute(),
+        const CounterRoute(),
         const StatsRoute(),
         const JournalRoute(),
         const SettingsRoute(),

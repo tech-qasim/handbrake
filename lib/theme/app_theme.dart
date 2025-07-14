@@ -44,7 +44,7 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       elevation: 0,
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.lightModeScreenBgColor,
     ),
     textTheme: AppTextTheme.textTheme(AppColorSchemes.lightColorScheme),
     datePickerTheme: const DatePickerThemeData(
