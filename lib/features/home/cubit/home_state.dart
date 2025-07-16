@@ -40,8 +40,8 @@ class HomeState {
     int? soberCount,
     Timer? timer,
     Duration? soberTime,
-    String? selectedTriggerChip,
-    String? selectedEmotionChip,
+    String? Function()? selectedTriggerChip,
+    String? Function()? selectedEmotionChip,
     double? urgeIntensity,
   }) {
     return HomeState(
@@ -50,8 +50,12 @@ class HomeState {
       soberCount: soberCount ?? this.soberCount,
       timer: timer ?? this.timer,
       soberTime: soberTime ?? this.soberTime,
-      selectedTriggerChip: selectedTriggerChip ?? this.selectedTriggerChip,
-      selectedEmotionChip: selectedEmotionChip ?? this.selectedEmotionChip,
+      selectedTriggerChip: selectedTriggerChip != null
+          ? selectedTriggerChip()
+          : this.selectedTriggerChip,
+      selectedEmotionChip: selectedEmotionChip != null
+          ? selectedEmotionChip()
+          : this.selectedEmotionChip,
       urgeIntensity: urgeIntensity ?? this.urgeIntensity,
     );
   }

@@ -5,12 +5,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
+import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';
 import 'package:handbrake/widgets/app_textfield.dart';
 
 @RoutePage()
-class RelapseLogScreen extends StatelessWidget {
+class RelapseLogScreen extends StatefulWidget {
   const RelapseLogScreen({super.key});
+
+  @override
+  State<RelapseLogScreen> createState() => _RelapseLogScreenState();
+}
+
+class _RelapseLogScreenState extends State<RelapseLogScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeCubit>().resetRelapseLog();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +142,24 @@ class RelapseLogScreen extends StatelessWidget {
 
             AppCustomButton(
               isFullWidth: true,
-              onPressed: () {},
+              onPressed:
+                  selectedEmotionChip != null && selectedTriggerChip != null
+                  ? () {
+                      context.read<HomeCubit>().addRelapse(
+                        DateTime.now(),
+                        selectedTriggerChip,
+                        selectedEmotionChip,
+                        urgeIntensity,
+                      );
+
+                      context.read<HomeCubit>().setLastRelapseDateTime();
+                      context.router.maybePop();
+                    }
+                  : null,
+              buttonColor:
+                  selectedEmotionChip != null && selectedTriggerChip != null
+                  ? AppColors.primaryColor
+                  : Colors.blueGrey,
               buttonText: 'Save & Reset Counter',
             ),
           ],

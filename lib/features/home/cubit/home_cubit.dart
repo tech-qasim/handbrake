@@ -25,8 +25,18 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  void addRelapse(DateTime relapseDateTime) async {
-    final relapse = RelapsesCompanion(relapseTime: Value(relapseDateTime));
+  void addRelapse(
+    DateTime relapseDateTime,
+    String trigger,
+    String emotion,
+    double urgeIntensity,
+  ) async {
+    final relapse = RelapsesCompanion(
+      relapseTime: Value(relapseDateTime),
+      trigger: Value(trigger),
+      emotion: Value(emotion),
+      urgeIntensity: Value(urgeIntensity),
+    );
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 
     if (result != null) {
@@ -85,15 +95,24 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(soberTime: soberTime));
   }
 
-  void setTriggerChip(String trigger) {
-    emit(state.copyWith(selectedTriggerChip: trigger));
+  void setTriggerChip(String? trigger) {
+    emit(state.copyWith(selectedTriggerChip: () => trigger));
   }
 
-  void setEmotionChip(String emotion) {
-    emit(state.copyWith(selectedEmotionChip: emotion));
+  void setEmotionChip(String? emotion) {
+    emit(state.copyWith(selectedEmotionChip: () => emotion));
   }
 
   void setUrgeIntensity(double val) {
     emit(state.copyWith(urgeIntensity: val));
+  }
+
+  void resetRelapseLog() {
+    emit(
+      state.copyWith(
+        selectedEmotionChip: () => null,
+        selectedTriggerChip: () => null,
+      ),
+    );
   }
 }

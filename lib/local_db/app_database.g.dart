@@ -43,8 +43,36 @@ class $RelapsesTable extends Relapses with TableInfo<$RelapsesTable, Relapse> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _emotionMeta = const VerificationMeta(
+    'emotion',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, relapseTime, trigger];
+  late final GeneratedColumn<String> emotion = GeneratedColumn<String>(
+    'emotion',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _urgeIntensityMeta = const VerificationMeta(
+    'urgeIntensity',
+  );
+  @override
+  late final GeneratedColumn<double> urgeIntensity = GeneratedColumn<double>(
+    'urge_intensity',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    relapseTime,
+    trigger,
+    emotion,
+    urgeIntensity,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -77,6 +105,23 @@ class $RelapsesTable extends Relapses with TableInfo<$RelapsesTable, Relapse> {
         trigger.isAcceptableOrUnknown(data['trigger']!, _triggerMeta),
       );
     }
+    if (data.containsKey('emotion')) {
+      context.handle(
+        _emotionMeta,
+        emotion.isAcceptableOrUnknown(data['emotion']!, _emotionMeta),
+      );
+    }
+    if (data.containsKey('urge_intensity')) {
+      context.handle(
+        _urgeIntensityMeta,
+        urgeIntensity.isAcceptableOrUnknown(
+          data['urge_intensity']!,
+          _urgeIntensityMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_urgeIntensityMeta);
+    }
     return context;
   }
 
@@ -98,6 +143,14 @@ class $RelapsesTable extends Relapses with TableInfo<$RelapsesTable, Relapse> {
         DriftSqlType.string,
         data['${effectivePrefix}trigger'],
       ),
+      emotion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}emotion'],
+      ),
+      urgeIntensity: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}urge_intensity'],
+      )!,
     );
   }
 
@@ -111,7 +164,15 @@ class Relapse extends DataClass implements Insertable<Relapse> {
   final int id;
   final DateTime relapseTime;
   final String? trigger;
-  const Relapse({required this.id, required this.relapseTime, this.trigger});
+  final String? emotion;
+  final double urgeIntensity;
+  const Relapse({
+    required this.id,
+    required this.relapseTime,
+    this.trigger,
+    this.emotion,
+    required this.urgeIntensity,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -120,6 +181,10 @@ class Relapse extends DataClass implements Insertable<Relapse> {
     if (!nullToAbsent || trigger != null) {
       map['trigger'] = Variable<String>(trigger);
     }
+    if (!nullToAbsent || emotion != null) {
+      map['emotion'] = Variable<String>(emotion);
+    }
+    map['urge_intensity'] = Variable<double>(urgeIntensity);
     return map;
   }
 
@@ -130,6 +195,10 @@ class Relapse extends DataClass implements Insertable<Relapse> {
       trigger: trigger == null && nullToAbsent
           ? const Value.absent()
           : Value(trigger),
+      emotion: emotion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(emotion),
+      urgeIntensity: Value(urgeIntensity),
     );
   }
 
@@ -142,6 +211,8 @@ class Relapse extends DataClass implements Insertable<Relapse> {
       id: serializer.fromJson<int>(json['id']),
       relapseTime: serializer.fromJson<DateTime>(json['relapseTime']),
       trigger: serializer.fromJson<String?>(json['trigger']),
+      emotion: serializer.fromJson<String?>(json['emotion']),
+      urgeIntensity: serializer.fromJson<double>(json['urgeIntensity']),
     );
   }
   @override
@@ -151,6 +222,8 @@ class Relapse extends DataClass implements Insertable<Relapse> {
       'id': serializer.toJson<int>(id),
       'relapseTime': serializer.toJson<DateTime>(relapseTime),
       'trigger': serializer.toJson<String?>(trigger),
+      'emotion': serializer.toJson<String?>(emotion),
+      'urgeIntensity': serializer.toJson<double>(urgeIntensity),
     };
   }
 
@@ -158,10 +231,14 @@ class Relapse extends DataClass implements Insertable<Relapse> {
     int? id,
     DateTime? relapseTime,
     Value<String?> trigger = const Value.absent(),
+    Value<String?> emotion = const Value.absent(),
+    double? urgeIntensity,
   }) => Relapse(
     id: id ?? this.id,
     relapseTime: relapseTime ?? this.relapseTime,
     trigger: trigger.present ? trigger.value : this.trigger,
+    emotion: emotion.present ? emotion.value : this.emotion,
+    urgeIntensity: urgeIntensity ?? this.urgeIntensity,
   );
   Relapse copyWithCompanion(RelapsesCompanion data) {
     return Relapse(
@@ -170,6 +247,10 @@ class Relapse extends DataClass implements Insertable<Relapse> {
           ? data.relapseTime.value
           : this.relapseTime,
       trigger: data.trigger.present ? data.trigger.value : this.trigger,
+      emotion: data.emotion.present ? data.emotion.value : this.emotion,
+      urgeIntensity: data.urgeIntensity.present
+          ? data.urgeIntensity.value
+          : this.urgeIntensity,
     );
   }
 
@@ -178,45 +259,61 @@ class Relapse extends DataClass implements Insertable<Relapse> {
     return (StringBuffer('Relapse(')
           ..write('id: $id, ')
           ..write('relapseTime: $relapseTime, ')
-          ..write('trigger: $trigger')
+          ..write('trigger: $trigger, ')
+          ..write('emotion: $emotion, ')
+          ..write('urgeIntensity: $urgeIntensity')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, relapseTime, trigger);
+  int get hashCode =>
+      Object.hash(id, relapseTime, trigger, emotion, urgeIntensity);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Relapse &&
           other.id == this.id &&
           other.relapseTime == this.relapseTime &&
-          other.trigger == this.trigger);
+          other.trigger == this.trigger &&
+          other.emotion == this.emotion &&
+          other.urgeIntensity == this.urgeIntensity);
 }
 
 class RelapsesCompanion extends UpdateCompanion<Relapse> {
   final Value<int> id;
   final Value<DateTime> relapseTime;
   final Value<String?> trigger;
+  final Value<String?> emotion;
+  final Value<double> urgeIntensity;
   const RelapsesCompanion({
     this.id = const Value.absent(),
     this.relapseTime = const Value.absent(),
     this.trigger = const Value.absent(),
+    this.emotion = const Value.absent(),
+    this.urgeIntensity = const Value.absent(),
   });
   RelapsesCompanion.insert({
     this.id = const Value.absent(),
     required DateTime relapseTime,
     this.trigger = const Value.absent(),
-  }) : relapseTime = Value(relapseTime);
+    this.emotion = const Value.absent(),
+    required double urgeIntensity,
+  }) : relapseTime = Value(relapseTime),
+       urgeIntensity = Value(urgeIntensity);
   static Insertable<Relapse> custom({
     Expression<int>? id,
     Expression<DateTime>? relapseTime,
     Expression<String>? trigger,
+    Expression<String>? emotion,
+    Expression<double>? urgeIntensity,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (relapseTime != null) 'relapse_time': relapseTime,
       if (trigger != null) 'trigger': trigger,
+      if (emotion != null) 'emotion': emotion,
+      if (urgeIntensity != null) 'urge_intensity': urgeIntensity,
     });
   }
 
@@ -224,11 +321,15 @@ class RelapsesCompanion extends UpdateCompanion<Relapse> {
     Value<int>? id,
     Value<DateTime>? relapseTime,
     Value<String?>? trigger,
+    Value<String?>? emotion,
+    Value<double>? urgeIntensity,
   }) {
     return RelapsesCompanion(
       id: id ?? this.id,
       relapseTime: relapseTime ?? this.relapseTime,
       trigger: trigger ?? this.trigger,
+      emotion: emotion ?? this.emotion,
+      urgeIntensity: urgeIntensity ?? this.urgeIntensity,
     );
   }
 
@@ -244,6 +345,12 @@ class RelapsesCompanion extends UpdateCompanion<Relapse> {
     if (trigger.present) {
       map['trigger'] = Variable<String>(trigger.value);
     }
+    if (emotion.present) {
+      map['emotion'] = Variable<String>(emotion.value);
+    }
+    if (urgeIntensity.present) {
+      map['urge_intensity'] = Variable<double>(urgeIntensity.value);
+    }
     return map;
   }
 
@@ -252,7 +359,9 @@ class RelapsesCompanion extends UpdateCompanion<Relapse> {
     return (StringBuffer('RelapsesCompanion(')
           ..write('id: $id, ')
           ..write('relapseTime: $relapseTime, ')
-          ..write('trigger: $trigger')
+          ..write('trigger: $trigger, ')
+          ..write('emotion: $emotion, ')
+          ..write('urgeIntensity: $urgeIntensity')
           ..write(')'))
         .toString();
   }
@@ -274,12 +383,16 @@ typedef $$RelapsesTableCreateCompanionBuilder =
       Value<int> id,
       required DateTime relapseTime,
       Value<String?> trigger,
+      Value<String?> emotion,
+      required double urgeIntensity,
     });
 typedef $$RelapsesTableUpdateCompanionBuilder =
     RelapsesCompanion Function({
       Value<int> id,
       Value<DateTime> relapseTime,
       Value<String?> trigger,
+      Value<String?> emotion,
+      Value<double> urgeIntensity,
     });
 
 class $$RelapsesTableFilterComposer
@@ -303,6 +416,16 @@ class $$RelapsesTableFilterComposer
 
   ColumnFilters<String> get trigger => $composableBuilder(
     column: $table.trigger,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get emotion => $composableBuilder(
+    column: $table.emotion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get urgeIntensity => $composableBuilder(
+    column: $table.urgeIntensity,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -330,6 +453,16 @@ class $$RelapsesTableOrderingComposer
     column: $table.trigger,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get emotion => $composableBuilder(
+    column: $table.emotion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get urgeIntensity => $composableBuilder(
+    column: $table.urgeIntensity,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$RelapsesTableAnnotationComposer
@@ -351,6 +484,14 @@ class $$RelapsesTableAnnotationComposer
 
   GeneratedColumn<String> get trigger =>
       $composableBuilder(column: $table.trigger, builder: (column) => column);
+
+  GeneratedColumn<String> get emotion =>
+      $composableBuilder(column: $table.emotion, builder: (column) => column);
+
+  GeneratedColumn<double> get urgeIntensity => $composableBuilder(
+    column: $table.urgeIntensity,
+    builder: (column) => column,
+  );
 }
 
 class $$RelapsesTableTableManager
@@ -384,20 +525,28 @@ class $$RelapsesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<DateTime> relapseTime = const Value.absent(),
                 Value<String?> trigger = const Value.absent(),
+                Value<String?> emotion = const Value.absent(),
+                Value<double> urgeIntensity = const Value.absent(),
               }) => RelapsesCompanion(
                 id: id,
                 relapseTime: relapseTime,
                 trigger: trigger,
+                emotion: emotion,
+                urgeIntensity: urgeIntensity,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required DateTime relapseTime,
                 Value<String?> trigger = const Value.absent(),
+                Value<String?> emotion = const Value.absent(),
+                required double urgeIntensity,
               }) => RelapsesCompanion.insert(
                 id: id,
                 relapseTime: relapseTime,
                 trigger: trigger,
+                emotion: emotion,
+                urgeIntensity: urgeIntensity,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
