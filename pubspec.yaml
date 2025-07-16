@@ -27,6 +27,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   path: ^1.9.1
   another_flutter_splash_screen: ^1.2.1
+  easy_date_timeline: ^2.0.9
 
 dev_dependencies:
   flutter_test:

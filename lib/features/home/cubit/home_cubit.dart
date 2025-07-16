@@ -12,7 +12,12 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeState.initial());
 
   void addRelapseOnOnboarding(DateTime relapseDateTime) async {
-    final relapse = RelapsesCompanion(relapseTime: Value(relapseDateTime));
+    final date = DateTime.now();
+    final relapse = RelapsesCompanion(
+      relapseTime: Value(relapseDateTime),
+      day: Value(date.day),
+      monthYear: Value("${date.year}-${date.month}"),
+    );
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 
     if (result != null) {
@@ -31,11 +36,14 @@ class HomeCubit extends Cubit<HomeState> {
     String emotion,
     double urgeIntensity,
   ) async {
+    final date = DateTime.now();
     final relapse = RelapsesCompanion(
       relapseTime: Value(relapseDateTime),
       trigger: Value(trigger),
       emotion: Value(emotion),
       urgeIntensity: Value(urgeIntensity),
+      day: Value(date.day),
+      monthYear: Value("${date.year}-${date.month}"),
     );
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 

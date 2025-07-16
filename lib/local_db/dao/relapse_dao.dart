@@ -69,6 +69,12 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
     }
   }
 
+  Future<List<Relapse>> getRelapsesByMonth(String monthYear) {
+    return (select(
+      relapses,
+    )..where((t) => t.monthYear.equals(monthYear))).get();
+  }
+
   // Future<bool> updateProduct(Product product) =>
   //     update(productTable).replace(product.toCompanion());
 
