@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
+import 'package:handbrake/features/journal/cubit/journal_cubit.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/routes/app_router.dart';
 import 'package:handbrake/theme/app_theme.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<ThemeModeCubit>(create: (context) => ThemeModeCubit()),
         BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
         BlocProvider<StatsCubit>(create: (context) => StatsCubit()),
+        BlocProvider<JournalCubit>(create: (context) => JournalCubit()),
       ],
       child: BlocBuilder<ThemeModeCubit, ThemeMode>(
         builder: (context, state) {

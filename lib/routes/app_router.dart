@@ -10,6 +10,7 @@ class AppRouter extends RootStackRouter {
       AutoRoute(page: IntroRoute.page),
       AutoRoute(page: LastRelapseRoute.page),
       AutoRoute(page: RelapseLogRoute.page),
+      AutoRoute(page: JournalEntryRoute.page),
       AutoRoute(
         page: NavigationRoute.page,
         children: [

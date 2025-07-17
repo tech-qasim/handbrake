@@ -2,14 +2,16 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:handbrake/local_db/dao/relapse_dao.dart';
+import 'package:handbrake/local_db/dao/journal/journal_dao.dart';
+import 'package:handbrake/local_db/dao/relapse/relapse_dao.dart';
+import 'package:handbrake/local_db/tables/journals.dart';
 import 'package:handbrake/local_db/tables/relapses.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Relapses])
+@DriftDatabase(tables: [Relapses, Journals])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -17,6 +19,7 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   RelapseDao get relapseDao => RelapseDao(this);
+  JournalDao get journalDao => JournalDao(this);
 }
 
 LazyDatabase _openConnection() {
