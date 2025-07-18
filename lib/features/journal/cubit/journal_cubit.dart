@@ -20,4 +20,29 @@ class JournalCubit extends Cubit<JournalState> {
       emit(state.copyWith(journalEntries: [...state.journalEntries, result]));
     }
   }
+
+  void groupEntriesByDate() {
+    final Map<String, List<Journal>> groupedEntries = {};
+
+    for (final entry in state.journalEntries) {
+      final date = entry.createdAt;
+      final dateKey = "${date.year}-${date.month}-${date.day}";
+
+      if (!groupedEntries.containsKey(dateKey)) {
+        groupedEntries[dateKey] = [];
+      }
+      groupedEntries[dateKey]!.add(entry);
+    }
+    // Sort each group by descending createdTime
+    groupedEntries.forEach((key, notes) {
+      notes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    });
+
+    emit(state.copyWith(groupedEntries: groupedEntries));
+  }
+
+  void getJournalEntries() async {
+    final result = await getIt<AppDatabase>().journalDao.getAllEntries();
+    emit(state.copyWith(journalEntries: result));
+  }
 }

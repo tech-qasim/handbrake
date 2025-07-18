@@ -24,18 +24,18 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
     }
   }
 
-  //   Future<List<Relapse>> getAllRelapses() async {
-  //     try {
-  //       final products = await select(relapses).get();
-  //       return products;
-  //     } on SqliteException catch (e) {
-  //       print('SQLite Error: ${e.message}');
-  //       return [];
-  //     } catch (e) {
-  //       print('Unknown error while fetching products: $e');
-  //       return [];
-  //     }
-  //   }
+  Future<List<Journal>> getAllEntries() async {
+    try {
+      final journalEntries = await select(journals).get();
+      return journalEntries;
+    } on SqliteException catch (e) {
+      print('SQLite Error: ${e.message}');
+      return [];
+    } catch (e) {
+      print('Unknown error while fetching products: $e');
+      return [];
+    }
+  }
 
   //   Future<Relapse?> getRelapseById(int id) async {
   //     try {
