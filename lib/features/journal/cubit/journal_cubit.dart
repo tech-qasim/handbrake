@@ -18,6 +18,41 @@ class JournalCubit extends Cubit<JournalState> {
 
     if (result != null) {
       emit(state.copyWith(journalEntries: [...state.journalEntries, result]));
+      groupEntriesByDate();
+    }
+  }
+
+  Future<bool> updateJournalEntry(Journal entry) async {
+    final result = await getIt<AppDatabase>().journalDao.updateJouralEntry(
+      entry,
+    );
+
+    if (result) {
+      final updatedEntries = state.journalEntries.map((e) {
+        if (e.id == entry.id) {
+          return entry;
+        }
+        return e; // return the existing item if not matched
+      }).toList();
+
+      emit(state.copyWith(journalEntries: updatedEntries));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> deleteJournalEntry(int id) async {
+    final result = await getIt<AppDatabase>().journalDao.deleteJournalEntry(id);
+
+    if (result) {
+      final updatedEntries = List<Journal>.from(state.journalEntries)
+        ..removeWhere((entry) => entry.id == id);
+
+      emit(state.copyWith(journalEntries: updatedEntries));
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -44,5 +79,6 @@ class JournalCubit extends Cubit<JournalState> {
   void getJournalEntries() async {
     final result = await getIt<AppDatabase>().journalDao.getAllEntries();
     emit(state.copyWith(journalEntries: result));
+    groupEntriesByDate();
   }
 }

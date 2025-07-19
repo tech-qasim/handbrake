@@ -78,31 +78,31 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
   // Future<bool> updateProduct(Product product) =>
   //     update(productTable).replace(product.toCompanion());
 
-  // Future<bool> updateProduct( product) async {
-  //   try {
-  //     await (update(
-  //       db.productTable,
-  //     )..where((p) => p.id.equals(product.id))).write(product.toCompanion());
-  //     return true;
-  //   } on SqliteException catch (e) {
-  //     debugPrint('SQLite Error: ${e.message}');
-  //     return false;
-  //   } catch (e) {
-  //     debugPrint('update database error : $e');
-  //     return false;
-  //   }
-  // }
+  Future<bool> updateJouralEntry(Journal entry) async {
+    try {
+      await (update(
+        db.journals,
+      )..where((p) => p.id.equals(entry.id))).write(entry);
+      return true;
+    } on SqliteException catch (e) {
+      debugPrint('SQLite Error: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('update database error : $e');
+      return false;
+    }
+  }
 
-  // Future<bool> deleteProduct(String id) async {
-  //   try {
-  //     await (delete(productTable)..where((tbl) => tbl.id.equals(id))).go();
-  //     return true;
-  //   } on SqliteException catch (e) {
-  //     debugPrint('SQLite Error: ${e.message}');
-  //     return false;
-  //   } catch (e) {
-  //     debugPrint('delete database error: $e');
-  //     return false;
-  //   }
-  // }
+  Future<bool> deleteJournalEntry(int id) async {
+    try {
+      await (delete(journals)..where((tbl) => tbl.id.equals(id))).go();
+      return true;
+    } on SqliteException catch (e) {
+      debugPrint('SQLite Error: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('delete database error: $e');
+      return false;
+    }
+  }
 }

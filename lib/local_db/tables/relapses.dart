@@ -5,7 +5,7 @@ class Relapses extends Table {
   DateTimeColumn get relapseTime => dateTime()();
   TextColumn get trigger => text().nullable()();
   TextColumn get emotion => text().nullable()();
-  RealColumn get urgeIntensity => real()();
+  RealColumn get urgeIntensity => real().nullable()();
   IntColumn get day => integer()();
   TextColumn get monthYear => text()();
 }

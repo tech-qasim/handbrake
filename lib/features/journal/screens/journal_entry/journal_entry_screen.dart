@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,9 @@ import 'package:handbrake/local_db/app_database.dart';
 
 @RoutePage()
 class JournalEntryScreen extends StatefulWidget {
-  const JournalEntryScreen({super.key});
+  const JournalEntryScreen({super.key, this.journalEntry});
+
+  final Journal? journalEntry;
 
   @override
   State<JournalEntryScreen> createState() => _JournalEntryScreenState();
@@ -17,6 +20,14 @@ class JournalEntryScreen extends StatefulWidget {
 class _JournalEntryScreenState extends State<JournalEntryScreen> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
+
+  @override
+  void initState() {
+    titleController.text = widget.journalEntry?.title ?? '';
+    contentController.text = widget.journalEntry?.content ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,16 +35,55 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              context.read<JournalCubit>().addJournalEntry(
-                titleController.text,
-                contentController.text,
-              );
+              if (titleController.text.isEmpty ||
+                  contentController.text.isEmpty) {
+                context.showSnackBar('Title and content cannot be empty');
+              } else {
+                if (widget.journalEntry == null) {
+                  context.read<JournalCubit>().addJournalEntry(
+                    titleController.text.trim(),
+                    contentController.text.trim(),
+                  );
+                } else {
+                  context.read<JournalCubit>().updateJournalEntry(
+                    widget.journalEntry!.copyWith(
+                      title: titleController.text,
+                      content: contentController.text,
+                    ),
+                  );
+                }
+
+                context.router.maybePop();
+              }
             },
             child: const Icon(Icons.check, size: 30),
           ),
+
+          if (widget.journalEntry != null)
+            TextButton(
+              onPressed: () async {
+                final result = await context
+                    .read<JournalCubit>()
+                    .deleteJournalEntry(widget.journalEntry!.id);
+
+                if (result) {
+                  if (context.mounted) {
+                    context.showSnackBar('The entry has been deleted.');
+                  }
+                } else {
+                  if (context.mounted) {
+                    context.showSnackBar('Deletion failed');
+                  }
+                }
+              },
+              child: const Icon(Icons.delete, size: 30),
+            ),
         ],
         automaticallyImplyLeading: false,
-        title: Text('Journal Entry', style: context.textTheme.displayLarge),
+        title: Text(
+          widget.journalEntry == null ? 'Journal Entry' : "Edit Journal Entry",
+          style: context.textTheme.displayLarge,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),

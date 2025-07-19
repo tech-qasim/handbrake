@@ -16,7 +16,7 @@ class AppRouter extends RootStackRouter {
         children: [
           AutoRoute(page: CounterRoute.page),
           AutoRoute(page: StatsRoute.page),
-          AutoRoute(page: JournalRoute.page),
+          AutoRoute(page: JournalViewRoute.page),
           AutoRoute(page: SettingsRoute.page),
         ],
       ),

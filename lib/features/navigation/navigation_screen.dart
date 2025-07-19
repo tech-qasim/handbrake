@@ -14,7 +14,7 @@ class NavigationScreen extends StatelessWidget {
       routes: [
         const CounterRoute(),
         const StatsRoute(),
-        const JournalRoute(),
+        const JournalViewRoute(),
         const SettingsRoute(),
       ],
       builder: (context, child) {

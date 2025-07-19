@@ -10,13 +10,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i11;
+import 'package:flutter/material.dart' as _i12;
 import 'package:handbrake/features/home/screens/counter/counter_screen.dart'
     as _i1;
 import 'package:handbrake/features/home/screens/relapse_log/relapse_log_screen.dart'
     as _i7;
 import 'package:handbrake/features/journal/screens/journal_entry/journal_entry_screen.dart'
     as _i3;
-import 'package:handbrake/features/journal/screens/journal_view/journal_screen.dart'
+import 'package:handbrake/features/journal/screens/journal_view/journal_view_screen.dart'
     as _i4;
 import 'package:handbrake/features/navigation/navigation_screen.dart' as _i6;
 import 'package:handbrake/features/onboarding/screens/intro/intro_screen.dart'
@@ -27,6 +28,7 @@ import 'package:handbrake/features/settings/screens/settings_screen.dart'
     as _i8;
 import 'package:handbrake/features/splash/splash_screen.dart' as _i9;
 import 'package:handbrake/features/stats/screens/stats_screen.dart' as _i10;
+import 'package:handbrake/local_db/app_database.dart' as _i13;
 
 /// generated route for
 /// [_i1.CounterScreen]
@@ -62,32 +64,68 @@ class IntroRoute extends _i11.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.JournalEntryScreen]
-class JournalEntryRoute extends _i11.PageRouteInfo<void> {
-  const JournalEntryRoute({List<_i11.PageRouteInfo>? children})
-    : super(JournalEntryRoute.name, initialChildren: children);
+class JournalEntryRoute extends _i11.PageRouteInfo<JournalEntryRouteArgs> {
+  JournalEntryRoute({
+    _i12.Key? key,
+    _i13.Journal? journalEntry,
+    List<_i11.PageRouteInfo>? children,
+  }) : super(
+         JournalEntryRoute.name,
+         args: JournalEntryRouteArgs(key: key, journalEntry: journalEntry),
+         initialChildren: children,
+       );
 
   static const String name = 'JournalEntryRoute';
 
   static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i3.JournalEntryScreen();
+      final args = data.argsAs<JournalEntryRouteArgs>(
+        orElse: () => const JournalEntryRouteArgs(),
+      );
+      return _i3.JournalEntryScreen(
+        key: args.key,
+        journalEntry: args.journalEntry,
+      );
     },
   );
 }
 
-/// generated route for
-/// [_i4.JournalScreen]
-class JournalRoute extends _i11.PageRouteInfo<void> {
-  const JournalRoute({List<_i11.PageRouteInfo>? children})
-    : super(JournalRoute.name, initialChildren: children);
+class JournalEntryRouteArgs {
+  const JournalEntryRouteArgs({this.key, this.journalEntry});
 
-  static const String name = 'JournalRoute';
+  final _i12.Key? key;
+
+  final _i13.Journal? journalEntry;
+
+  @override
+  String toString() {
+    return 'JournalEntryRouteArgs{key: $key, journalEntry: $journalEntry}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! JournalEntryRouteArgs) return false;
+    return key == other.key && journalEntry == other.journalEntry;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ journalEntry.hashCode;
+}
+
+/// generated route for
+/// [_i4.JournalViewScreen]
+class JournalViewRoute extends _i11.PageRouteInfo<void> {
+  const JournalViewRoute({List<_i11.PageRouteInfo>? children})
+    : super(JournalViewRoute.name, initialChildren: children);
+
+  static const String name = 'JournalViewRoute';
 
   static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i4.JournalScreen();
+      return const _i4.JournalViewScreen();
     },
   );
 }
