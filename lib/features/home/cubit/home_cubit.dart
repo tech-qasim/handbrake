@@ -12,11 +12,10 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeState.initial());
 
   void addRelapseOnOnboarding(DateTime relapseDateTime) async {
-    final date = DateTime.now();
     final relapse = RelapsesCompanion(
       relapseTime: Value(relapseDateTime),
-      day: Value(date.day),
-      monthYear: Value("${date.year}-${date.month}"),
+      day: Value(relapseDateTime.day),
+      monthYear: Value("${relapseDateTime.year}-${relapseDateTime.month}"),
     );
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 
@@ -80,6 +79,12 @@ class HomeCubit extends Cubit<HomeState> {
   void setLastRelapseDateTime() async {
     final relapse = await getIt<AppDatabase>().relapseDao.getLastRelapse();
     emit(state.copyWith(lastRelapseDate: relapse?.relapseTime));
+  }
+
+  void setFirstRelapseDateTime() async {
+    final relapse = await getIt<AppDatabase>().relapseDao.getFirstRelapse();
+    emit(state.copyWith(firstRelapseDate: relapse?.relapseTime));
+    print(relapse?.relapseTime);
   }
 
   void startSoberTimer() {

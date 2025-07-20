@@ -5,6 +5,7 @@ import 'package:handbrake/local_db/app_database.dart';
 class HomeState {
   List<Relapse> relapses;
   DateTime lastRelapseDate;
+  DateTime firstRelapseDate;
   int soberCount;
   Timer? timer;
   Duration soberTime;
@@ -20,6 +21,7 @@ class HomeState {
     required this.selectedTriggerChip,
     this.selectedEmotionChip,
     required this.urgeIntensity,
+    required this.firstRelapseDate,
   });
   factory HomeState.initial() {
     return HomeState(
@@ -31,6 +33,7 @@ class HomeState {
       selectedTriggerChip: null,
       selectedEmotionChip: null,
       urgeIntensity: 1,
+      firstRelapseDate: DateTime.now(),
     );
   }
 
@@ -43,6 +46,7 @@ class HomeState {
     String? Function()? selectedTriggerChip,
     String? Function()? selectedEmotionChip,
     double? urgeIntensity,
+    DateTime? firstRelapseDate,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
@@ -57,6 +61,7 @@ class HomeState {
           ? selectedEmotionChip()
           : this.selectedEmotionChip,
       urgeIntensity: urgeIntensity ?? this.urgeIntensity,
+      firstRelapseDate: firstRelapseDate ?? this.firstRelapseDate,
     );
   }
 }

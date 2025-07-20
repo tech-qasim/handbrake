@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/features/journal/cubit/journal_cubit.dart';
 import 'package:handbrake/local_db/app_database.dart';
+import 'package:handbrake/theme/app_colors.dart';
 
 @RoutePage()
 class JournalEntryScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          TextButton(
+          IconButton(
             onPressed: () {
               if (titleController.text.isEmpty ||
                   contentController.text.isEmpty) {
@@ -56,11 +57,15 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
                 context.router.maybePop();
               }
             },
-            child: const Icon(Icons.check, size: 30),
+            icon: const Icon(
+              Icons.check,
+              size: 30,
+              color: AppColors.primaryColor,
+            ),
           ),
 
           if (widget.journalEntry != null)
-            TextButton(
+            IconButton(
               onPressed: () async {
                 final result = await context
                     .read<JournalCubit>()
@@ -75,11 +80,19 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
                     context.showSnackBar('Deletion failed');
                   }
                 }
+
+                if (context.mounted) {
+                  context.router.maybePop();
+                }
               },
-              child: const Icon(Icons.delete, size: 30),
+              icon: const Icon(
+                Icons.delete,
+                size: 30,
+                color: AppColors.primaryColor,
+              ),
             ),
         ],
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         title: Text(
           widget.journalEntry == null ? 'Journal Entry' : "Edit Journal Entry",
           style: context.textTheme.displayLarge,

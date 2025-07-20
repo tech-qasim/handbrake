@@ -36,6 +36,7 @@ class JournalCubit extends Cubit<JournalState> {
       }).toList();
 
       emit(state.copyWith(journalEntries: updatedEntries));
+      groupEntriesByDate();
       return true;
     } else {
       return false;
@@ -50,6 +51,7 @@ class JournalCubit extends Cubit<JournalState> {
         ..removeWhere((entry) => entry.id == id);
 
       emit(state.copyWith(journalEntries: updatedEntries));
+      groupEntriesByDate();
       return true;
     } else {
       return false;

@@ -69,8 +69,86 @@ extension DateFormatting on DateTime {
     return DateFormat('HH:mm').format(this);
   }
 
+  DateTime get atStartOfDayUtc => DateTime.utc(year, month, day);
+
   /// Custom format
   String format(String pattern) {
     return DateFormat(pattern).format(this);
+  }
+}
+
+extension WidgetsModifier on Widget {
+  @widgetFactory
+  Widget padding(EdgeInsetsGeometry padding) {
+    return Padding(padding: padding, child: this);
+  }
+
+  @widgetFactory
+  Widget addPadding(EdgeInsetsGeometry padding) {
+    return Padding(padding: padding, child: this);
+  }
+
+  @widgetFactory
+  Widget center() {
+    return Center(child: this);
+  }
+
+  @widgetFactory
+  Widget sliverToBoxAdapter() {
+    return SliverToBoxAdapter(child: this);
+  }
+
+  @widgetFactory
+  Widget circularIconContainer({
+    double size = 40,
+    Color backgroundColor = AppColors.whiteColor,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(8),
+  }) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
+      alignment: Alignment.center,
+      padding: padding,
+      child: this,
+    );
+  }
+
+  @widgetFactory
+  Widget addTitle({
+    required String title,
+    required BuildContext context,
+    TextStyle? textStyle,
+    double? gap,
+    Widget? icon,
+    double? iconGap = 7,
+  }) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if (icon != null) ...[
+              icon,
+              if (iconGap != null) SizedBox(width: iconGap),
+            ],
+            Text(
+              title,
+              style:
+                  textStyle ??
+                  context.textTheme.titleLarge?.copyWith(
+                    fontSize: 17,
+                    color: AppColors.whiteColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
+        ),
+        gap == null ? const SizedBox(height: 15) : SizedBox(height: gap),
+        this,
+      ],
+    );
   }
 }

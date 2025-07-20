@@ -42,6 +42,7 @@ class LastRelapseScreen extends StatelessWidget {
                 ),
                 child: CupertinoDatePicker(
                   initialDateTime: DateTime.now(),
+                  maximumDate: DateTime.now(),
                   mode: CupertinoDatePickerMode.date,
                   showDayOfWeek: true,
                   onDateTimeChanged: (DateTime newDate) {

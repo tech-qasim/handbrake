@@ -16,4 +16,9 @@ class StatsCubit extends Cubit<StatsState> {
 
     emit(state.copyWith(relapseHistory: relapseHistory));
   }
+
+  void setFocusedDate(DateTime datetime) {
+    print("Emitting focused date: $datetime");
+    emit(state.copyWith(focusedDate: datetime));
+  }
 }
