@@ -20,9 +20,6 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeCubit>().setFirstRelapseDateTime();
-    });
     super.initState();
   }
 
