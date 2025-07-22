@@ -25,8 +25,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeModeCubit>(create: (context) => ThemeModeCubit()),
-        BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
         BlocProvider<StatsCubit>(create: (context) => StatsCubit()),
+        BlocProvider<HomeCubit>(
+          create: (context) => HomeCubit(context.read<StatsCubit>()),
+        ),
         BlocProvider<JournalCubit>(create: (context) => JournalCubit()),
       ],
       child: BlocBuilder<ThemeModeCubit, ThemeMode>(

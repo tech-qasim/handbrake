@@ -12,4 +12,5 @@ class AppColors {
   static const timeBgColor = Color(0xffE8F2F0);
   static const textfieldBgColor = Color(0xffF0F2F5);
   static const journalCardBgColor = Color(0xffEEEEEE);
+  static const statsCardBorderColor = Color(0xffD1DBE8);
 }

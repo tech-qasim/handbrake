@@ -49,6 +49,10 @@ extension DateFormatting on DateTime {
     return DateFormat('MMM dd, yyyy').format(this);
   }
 
+  String toMonthYear() {
+    return DateFormat('MMMM yyyy').format(this);
+  }
+
   /// Format: "EEEE, MMMM d, yyyy" (e.g., "Friday, July 19, 2024")
   String toFullDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(this);

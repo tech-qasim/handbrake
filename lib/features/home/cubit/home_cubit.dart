@@ -4,12 +4,14 @@ import 'package:drift/drift.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_state.dart';
+import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/local_db/app_database.dart';
 import 'package:handbrake/utils/di.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeState.initial());
+  final StatsCubit statsCubit;
+  HomeCubit(this.statsCubit) : super(HomeState.initial());
 
   void addRelapseOnOnboarding(DateTime relapseDateTime) async {
     final relapse = RelapsesCompanion(
@@ -53,6 +55,8 @@ class HomeCubit extends Cubit<HomeState> {
           lastRelapseDate: result.relapseTime,
         ),
       );
+
+      statsCubit.addRelapseToRelapseHistoryMap(result);
       // setLastRelapseDateTime();
     }
   }
