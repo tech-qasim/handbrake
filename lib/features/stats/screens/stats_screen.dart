@@ -82,6 +82,9 @@ class _StatsScreenState extends State<StatsScreen> {
                 final date = "${focusedDay.year}-${focusedDay.month}";
 
                 context.read<StatsCubit>().setFocusedDate(focusedDay);
+                if (relapseHistoryMap.containsKey(date)) {
+                  return;
+                }
                 context.read<StatsCubit>().getRelapseHistoryByMonth(date);
               },
               calendarBuilders: CalendarBuilders(
