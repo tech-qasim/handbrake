@@ -768,16 +768,300 @@ class JournalsCompanion extends UpdateCompanion<Journal> {
   }
 }
 
+class $StatsTable extends Stats with TableInfo<$StatsTable, Stat> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $StatsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _totalCleanDaysMeta = const VerificationMeta(
+    'totalCleanDays',
+  );
+  @override
+  late final GeneratedColumn<int> totalCleanDays = GeneratedColumn<int>(
+    'total_clean_days',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _relapseCountMeta = const VerificationMeta(
+    'relapseCount',
+  );
+  @override
+  late final GeneratedColumn<int> relapseCount = GeneratedColumn<int>(
+    'relapse_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _longestStreakMeta = const VerificationMeta(
+    'longestStreak',
+  );
+  @override
+  late final GeneratedColumn<int> longestStreak = GeneratedColumn<int>(
+    'longest_streak',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    totalCleanDays,
+    relapseCount,
+    longestStreak,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'stats';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Stat> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('total_clean_days')) {
+      context.handle(
+        _totalCleanDaysMeta,
+        totalCleanDays.isAcceptableOrUnknown(
+          data['total_clean_days']!,
+          _totalCleanDaysMeta,
+        ),
+      );
+    }
+    if (data.containsKey('relapse_count')) {
+      context.handle(
+        _relapseCountMeta,
+        relapseCount.isAcceptableOrUnknown(
+          data['relapse_count']!,
+          _relapseCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('longest_streak')) {
+      context.handle(
+        _longestStreakMeta,
+        longestStreak.isAcceptableOrUnknown(
+          data['longest_streak']!,
+          _longestStreakMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  Stat map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Stat(
+      totalCleanDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_clean_days'],
+      )!,
+      relapseCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}relapse_count'],
+      )!,
+      longestStreak: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}longest_streak'],
+      )!,
+    );
+  }
+
+  @override
+  $StatsTable createAlias(String alias) {
+    return $StatsTable(attachedDatabase, alias);
+  }
+}
+
+class Stat extends DataClass implements Insertable<Stat> {
+  final int totalCleanDays;
+  final int relapseCount;
+  final int longestStreak;
+  const Stat({
+    required this.totalCleanDays,
+    required this.relapseCount,
+    required this.longestStreak,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['total_clean_days'] = Variable<int>(totalCleanDays);
+    map['relapse_count'] = Variable<int>(relapseCount);
+    map['longest_streak'] = Variable<int>(longestStreak);
+    return map;
+  }
+
+  StatsCompanion toCompanion(bool nullToAbsent) {
+    return StatsCompanion(
+      totalCleanDays: Value(totalCleanDays),
+      relapseCount: Value(relapseCount),
+      longestStreak: Value(longestStreak),
+    );
+  }
+
+  factory Stat.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Stat(
+      totalCleanDays: serializer.fromJson<int>(json['totalCleanDays']),
+      relapseCount: serializer.fromJson<int>(json['relapseCount']),
+      longestStreak: serializer.fromJson<int>(json['longestStreak']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'totalCleanDays': serializer.toJson<int>(totalCleanDays),
+      'relapseCount': serializer.toJson<int>(relapseCount),
+      'longestStreak': serializer.toJson<int>(longestStreak),
+    };
+  }
+
+  Stat copyWith({int? totalCleanDays, int? relapseCount, int? longestStreak}) =>
+      Stat(
+        totalCleanDays: totalCleanDays ?? this.totalCleanDays,
+        relapseCount: relapseCount ?? this.relapseCount,
+        longestStreak: longestStreak ?? this.longestStreak,
+      );
+  Stat copyWithCompanion(StatsCompanion data) {
+    return Stat(
+      totalCleanDays: data.totalCleanDays.present
+          ? data.totalCleanDays.value
+          : this.totalCleanDays,
+      relapseCount: data.relapseCount.present
+          ? data.relapseCount.value
+          : this.relapseCount,
+      longestStreak: data.longestStreak.present
+          ? data.longestStreak.value
+          : this.longestStreak,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Stat(')
+          ..write('totalCleanDays: $totalCleanDays, ')
+          ..write('relapseCount: $relapseCount, ')
+          ..write('longestStreak: $longestStreak')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(totalCleanDays, relapseCount, longestStreak);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Stat &&
+          other.totalCleanDays == this.totalCleanDays &&
+          other.relapseCount == this.relapseCount &&
+          other.longestStreak == this.longestStreak);
+}
+
+class StatsCompanion extends UpdateCompanion<Stat> {
+  final Value<int> totalCleanDays;
+  final Value<int> relapseCount;
+  final Value<int> longestStreak;
+  final Value<int> rowid;
+  const StatsCompanion({
+    this.totalCleanDays = const Value.absent(),
+    this.relapseCount = const Value.absent(),
+    this.longestStreak = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  StatsCompanion.insert({
+    this.totalCleanDays = const Value.absent(),
+    this.relapseCount = const Value.absent(),
+    this.longestStreak = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  static Insertable<Stat> custom({
+    Expression<int>? totalCleanDays,
+    Expression<int>? relapseCount,
+    Expression<int>? longestStreak,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (totalCleanDays != null) 'total_clean_days': totalCleanDays,
+      if (relapseCount != null) 'relapse_count': relapseCount,
+      if (longestStreak != null) 'longest_streak': longestStreak,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  StatsCompanion copyWith({
+    Value<int>? totalCleanDays,
+    Value<int>? relapseCount,
+    Value<int>? longestStreak,
+    Value<int>? rowid,
+  }) {
+    return StatsCompanion(
+      totalCleanDays: totalCleanDays ?? this.totalCleanDays,
+      relapseCount: relapseCount ?? this.relapseCount,
+      longestStreak: longestStreak ?? this.longestStreak,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (totalCleanDays.present) {
+      map['total_clean_days'] = Variable<int>(totalCleanDays.value);
+    }
+    if (relapseCount.present) {
+      map['relapse_count'] = Variable<int>(relapseCount.value);
+    }
+    if (longestStreak.present) {
+      map['longest_streak'] = Variable<int>(longestStreak.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StatsCompanion(')
+          ..write('totalCleanDays: $totalCleanDays, ')
+          ..write('relapseCount: $relapseCount, ')
+          ..write('longestStreak: $longestStreak, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $RelapsesTable relapses = $RelapsesTable(this);
   late final $JournalsTable journals = $JournalsTable(this);
+  late final $StatsTable stats = $StatsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [relapses, journals];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    relapses,
+    journals,
+    stats,
+  ];
 }
 
 typedef $$RelapsesTableCreateCompanionBuilder =
@@ -1179,6 +1463,167 @@ typedef $$JournalsTableProcessedTableManager =
       Journal,
       PrefetchHooks Function()
     >;
+typedef $$StatsTableCreateCompanionBuilder =
+    StatsCompanion Function({
+      Value<int> totalCleanDays,
+      Value<int> relapseCount,
+      Value<int> longestStreak,
+      Value<int> rowid,
+    });
+typedef $$StatsTableUpdateCompanionBuilder =
+    StatsCompanion Function({
+      Value<int> totalCleanDays,
+      Value<int> relapseCount,
+      Value<int> longestStreak,
+      Value<int> rowid,
+    });
+
+class $$StatsTableFilterComposer extends Composer<_$AppDatabase, $StatsTable> {
+  $$StatsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get totalCleanDays => $composableBuilder(
+    column: $table.totalCleanDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get relapseCount => $composableBuilder(
+    column: $table.relapseCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get longestStreak => $composableBuilder(
+    column: $table.longestStreak,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$StatsTableOrderingComposer
+    extends Composer<_$AppDatabase, $StatsTable> {
+  $$StatsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get totalCleanDays => $composableBuilder(
+    column: $table.totalCleanDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get relapseCount => $composableBuilder(
+    column: $table.relapseCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get longestStreak => $composableBuilder(
+    column: $table.longestStreak,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$StatsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $StatsTable> {
+  $$StatsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get totalCleanDays => $composableBuilder(
+    column: $table.totalCleanDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get relapseCount => $composableBuilder(
+    column: $table.relapseCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get longestStreak => $composableBuilder(
+    column: $table.longestStreak,
+    builder: (column) => column,
+  );
+}
+
+class $$StatsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $StatsTable,
+          Stat,
+          $$StatsTableFilterComposer,
+          $$StatsTableOrderingComposer,
+          $$StatsTableAnnotationComposer,
+          $$StatsTableCreateCompanionBuilder,
+          $$StatsTableUpdateCompanionBuilder,
+          (Stat, BaseReferences<_$AppDatabase, $StatsTable, Stat>),
+          Stat,
+          PrefetchHooks Function()
+        > {
+  $$StatsTableTableManager(_$AppDatabase db, $StatsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$StatsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$StatsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$StatsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> totalCleanDays = const Value.absent(),
+                Value<int> relapseCount = const Value.absent(),
+                Value<int> longestStreak = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => StatsCompanion(
+                totalCleanDays: totalCleanDays,
+                relapseCount: relapseCount,
+                longestStreak: longestStreak,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> totalCleanDays = const Value.absent(),
+                Value<int> relapseCount = const Value.absent(),
+                Value<int> longestStreak = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => StatsCompanion.insert(
+                totalCleanDays: totalCleanDays,
+                relapseCount: relapseCount,
+                longestStreak: longestStreak,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$StatsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $StatsTable,
+      Stat,
+      $$StatsTableFilterComposer,
+      $$StatsTableOrderingComposer,
+      $$StatsTableAnnotationComposer,
+      $$StatsTableCreateCompanionBuilder,
+      $$StatsTableUpdateCompanionBuilder,
+      (Stat, BaseReferences<_$AppDatabase, $StatsTable, Stat>),
+      Stat,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1187,4 +1632,6 @@ class $AppDatabaseManager {
       $$RelapsesTableTableManager(_db, _db.relapses);
   $$JournalsTableTableManager get journals =>
       $$JournalsTableTableManager(_db, _db.journals);
+  $$StatsTableTableManager get stats =>
+      $$StatsTableTableManager(_db, _db.stats);
 }

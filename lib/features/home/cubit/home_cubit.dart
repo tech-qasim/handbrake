@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_state.dart';
@@ -80,9 +81,45 @@ class HomeCubit extends Cubit<HomeState> {
   //   return null;
   // }
 
-  void setLastRelapseDateTime() async {
+  Future<void> setLastRelapseDateOnAppStart() async {
     final relapse = await getIt<AppDatabase>().relapseDao.getLastRelapse();
+    debugPrint("last relapse : ${relapse?.relapseTime}");
     emit(state.copyWith(lastRelapseDate: relapse?.relapseTime));
+  }
+
+  void setLastRelapseDate(DateTime date) {
+    emit(state.copyWith(lastRelapseDate: date));
+  }
+
+  Future<void> initializeTimer() async {
+    setFirstRelapseDateTime();
+    await setLastRelapseDateOnAppStart();
+    await getLongestStreak();
+    startSoberTimer();
+  }
+
+  Future<int> getLongestStreak() async {
+    final relapse = state.lastRelapseDate;
+    final todayDate = DateTime.now();
+    final currentStreak = todayDate.difference(relapse).inDays;
+
+    debugPrint("longest streak");
+
+    final longestStreak =
+        getIt<SharedPreferences>().getInt(SharedPrefStrings.longestStreak) ?? 0;
+
+    if (currentStreak > longestStreak) {
+      getIt<SharedPreferences>().setInt(
+        SharedPrefStrings.longestStreak,
+        currentStreak,
+      );
+
+      emit(state.copyWith(longestStreak: currentStreak));
+    } else {
+      emit(state.copyWith(longestStreak: longestStreak));
+    }
+
+    return currentStreak;
   }
 
   void setFirstRelapseDateTime() async {

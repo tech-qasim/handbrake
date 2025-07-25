@@ -7,6 +7,7 @@ class AssetIcons {
 
 class SharedPrefStrings {
   static const String isUserOnboarded = 'isUserOnboarded';
+  static const String longestStreak = 'longestStreak';
 }
 
 List<String> triggers = [

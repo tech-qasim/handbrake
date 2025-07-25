@@ -3,9 +3,10 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:handbrake/local_db/app_database.dart';
 import 'package:handbrake/local_db/tables/relapses.dart';
+import 'package:handbrake/local_db/tables/stats.dart';
 part 'relapse_dao.g.dart';
 
-@DriftAccessor(tables: [Relapses])
+@DriftAccessor(tables: [Relapses, Stats])
 class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
   RelapseDao(super.db);
 
@@ -92,34 +93,9 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
     )..where((t) => t.monthYear.equals(monthYear))).get();
   }
 
-  // Future<bool> updateProduct(Product product) =>
-  //     update(productTable).replace(product.toCompanion());
+  Future<Stat?> getStats() async {
+    return select(stats).getSingleOrNull();
+  }
 
-  // Future<bool> updateProduct( product) async {
-  //   try {
-  //     await (update(
-  //       db.productTable,
-  //     )..where((p) => p.id.equals(product.id))).write(product.toCompanion());
-  //     return true;
-  //   } on SqliteException catch (e) {
-  //     debugPrint('SQLite Error: ${e.message}');
-  //     return false;
-  //   } catch (e) {
-  //     debugPrint('update database error : $e');
-  //     return false;
-  //   }
-  // }
-
-  // Future<bool> deleteProduct(String id) async {
-  //   try {
-  //     await (delete(productTable)..where((tbl) => tbl.id.equals(id))).go();
-  //     return true;
-  //   } on SqliteException catch (e) {
-  //     debugPrint('SQLite Error: ${e.message}');
-  //     return false;
-  //   } catch (e) {
-  //     debugPrint('delete database error: $e');
-  //     return false;
-  //   }
-  // }
+  void saveStats() {}
 }

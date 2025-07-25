@@ -5,4 +5,5 @@ part of 'relapse_dao.dart';
 // ignore_for_file: type=lint
 mixin _$RelapseDaoMixin on DatabaseAccessor<AppDatabase> {
   $RelapsesTable get relapses => attachedDatabase.relapses;
+  $StatsTable get stats => attachedDatabase.stats;
 }

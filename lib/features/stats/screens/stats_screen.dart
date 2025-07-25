@@ -34,13 +34,25 @@ class _StatsScreenState extends State<StatsScreen> {
       firstRelapseTime.month,
       firstRelapseTime.day,
     );
-
-    print('first relapse : $firstRelapse');
     final focusedDate = context.watch<StatsCubit>().state.focusedDate;
+
+    final focusedDateMonthYear = "${focusedDate.year}-${focusedDate.month}";
+
     final relapseHistoryMap = context
         .watch<StatsCubit>()
         .state
         .relapseHistoryMap;
+
+    final relapseCount =
+        context
+            .watch<StatsCubit>()
+            .state
+            .relapseHistoryMap[focusedDateMonthYear]
+            ?.length ??
+        0;
+
+    final longestStreak = context.watch<HomeCubit>().state.longestStreak;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -137,11 +149,18 @@ class _StatsScreenState extends State<StatsScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Quick Stats',
+              '${focusedDate.toMonthYear()} Stats',
               style: context.textTheme.displayLarge?.copyWith(fontSize: 22),
             ),
             const SizedBox(height: 10),
-            const StatsCardWidget(),
+            StatsCardWidget(
+              title: 'Total Relapses',
+              subtitle: relapseCount.toString(),
+            ),
+            StatsCardWidget(
+              title: 'Longest Streak',
+              subtitle: longestStreak.toString(),
+            ),
           ],
         ),
       ),

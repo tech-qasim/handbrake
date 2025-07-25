@@ -18,11 +18,11 @@ class CounterScreen extends StatefulWidget {
 class _CounterScreenState extends State<CounterScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeCubit>().setLastRelapseDateTime();
-      context.read<HomeCubit>().setFirstRelapseDateTime();
-      context.read<HomeCubit>().startSoberTimer();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<HomeCubit>().setLastRelapseDateTime();
+    //   context.read<HomeCubit>().setFirstRelapseDateTime();
+    //   context.read<HomeCubit>().startSoberTimer();
+    // });
     super.initState();
   }
 

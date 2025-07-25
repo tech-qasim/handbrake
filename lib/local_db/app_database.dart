@@ -6,12 +6,13 @@ import 'package:handbrake/local_db/dao/journal/journal_dao.dart';
 import 'package:handbrake/local_db/dao/relapse/relapse_dao.dart';
 import 'package:handbrake/local_db/tables/journals.dart';
 import 'package:handbrake/local_db/tables/relapses.dart';
+import 'package:handbrake/local_db/tables/stats.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Relapses, Journals])
+@DriftDatabase(tables: [Relapses, Journals, Stats])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

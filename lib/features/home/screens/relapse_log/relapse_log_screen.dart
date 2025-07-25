@@ -152,7 +152,11 @@ class _RelapseLogScreenState extends State<RelapseLogScreen> {
                         urgeIntensity,
                       );
 
-                      context.read<HomeCubit>().setLastRelapseDateTime();
+                      context.read<HomeCubit>().setLastRelapseDate(
+                        DateTime.now(),
+                      );
+
+                      context.read<HomeCubit>().getLongestStreak();
                       context.router.maybePop();
                     }
                   : null,

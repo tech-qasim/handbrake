@@ -1,8 +1,10 @@
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
+import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
@@ -44,11 +46,20 @@ class SplashScreen extends StatelessWidget {
         final isUserOnboarded = getIt<SharedPreferences>().getBool(
           SharedPrefStrings.isUserOnboarded,
         );
-        await Future.delayed(const Duration(seconds: 2));
+
         if (isUserOnboarded ?? false) {
-          context.router.push(const NavigationRoute());
+          context.read<HomeCubit>().initializeTimer();
+          Future.delayed(const Duration(seconds: 2)).then((_) {
+            if (context.mounted) {
+              context.router.replace(const NavigationRoute());
+            }
+          });
         } else {
-          context.router.push(const IntroRoute());
+          Future.delayed(const Duration(seconds: 2)).then((_) {
+            if (context.mounted) {
+              context.router.replace(const IntroRoute());
+            }
+          });
         }
       },
       useImmersiveMode: false,

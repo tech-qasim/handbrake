@@ -5,21 +5,20 @@ import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/theme/app_colors.dart';
 
 class StatsCardWidget extends StatelessWidget {
-  const StatsCardWidget({super.key});
+  const StatsCardWidget({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     final focusedDate = context.watch<StatsCubit>().state.focusedDate;
 
     final focusedDateMonthYear = "${focusedDate.year}-${focusedDate.month}";
-
-    final relapseCount =
-        context
-            .watch<StatsCubit>()
-            .state
-            .relapseHistoryMap[focusedDateMonthYear]
-            ?.length ??
-        0;
 
     return SizedBox(
       width: double.infinity,
@@ -32,18 +31,18 @@ class StatsCardWidget extends StatelessWidget {
         ),
         elevation: 0,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Total Relapses on ${focusedDate.toMonthYear()}',
-                style: context.textTheme.bodyMedium?.copyWith(fontSize: 20),
+                title,
+                style: context.textTheme.bodyMedium?.copyWith(fontSize: 16),
               ),
               const SizedBox(height: 10),
               Text(
-                relapseCount.toString(),
-                style: context.textTheme.bodyMedium?.copyWith(fontSize: 16),
+                subtitle,
+                style: context.textTheme.bodyMedium?.copyWith(fontSize: 24),
               ),
             ],
           ),

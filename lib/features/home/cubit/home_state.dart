@@ -12,6 +12,7 @@ class HomeState {
   String? selectedTriggerChip;
   String? selectedEmotionChip;
   double urgeIntensity;
+  int longestStreak;
   HomeState({
     required this.relapses,
     required this.lastRelapseDate,
@@ -22,6 +23,7 @@ class HomeState {
     this.selectedEmotionChip,
     required this.urgeIntensity,
     required this.firstRelapseDate,
+    required this.longestStreak,
   });
   factory HomeState.initial() {
     return HomeState(
@@ -34,6 +36,7 @@ class HomeState {
       selectedEmotionChip: null,
       urgeIntensity: 1,
       firstRelapseDate: DateTime.now(),
+      longestStreak: 0,
     );
   }
 
@@ -47,6 +50,7 @@ class HomeState {
     String? Function()? selectedEmotionChip,
     double? urgeIntensity,
     DateTime? firstRelapseDate,
+    int? longestStreak,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
@@ -62,6 +66,7 @@ class HomeState {
           : this.selectedEmotionChip,
       urgeIntensity: urgeIntensity ?? this.urgeIntensity,
       firstRelapseDate: firstRelapseDate ?? this.firstRelapseDate,
+      longestStreak: longestStreak ?? this.longestStreak,
     );
   }
 }
