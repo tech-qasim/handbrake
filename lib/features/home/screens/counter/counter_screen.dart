@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
+import 'package:handbrake/features/achievements/widgets/achievement_card_widget.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
@@ -18,11 +19,9 @@ class CounterScreen extends StatefulWidget {
 class _CounterScreenState extends State<CounterScreen> {
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<HomeCubit>().setLastRelapseDateTime();
-    //   context.read<HomeCubit>().setFirstRelapseDateTime();
-    //   context.read<HomeCubit>().startSoberTimer();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeCubit>().checkAndShowAchievementDialog(context);
+    });
     super.initState();
   }
 
@@ -35,50 +34,65 @@ class _CounterScreenState extends State<CounterScreen> {
     int minutes = soberTime.inMinutes % 60;
     int seconds = soberTime.inSeconds % 60;
 
+    final nextAward = context.watch<HomeCubit>().getNextAward();
+    final dayRequired = nextAward?.daysRequired ?? 0;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Home', style: context.textTheme.displayLarge),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Column(
-            children: [
-              Text(
-                'You\'ve been clean for',
-                style: context.textTheme.bodyMedium?.copyWith(fontSize: 25),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                '$days days',
-                style: context.textTheme.displayLarge?.copyWith(fontSize: 30),
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TimeContainer(time: days, timeType: 'Days'),
-                  TimeContainer(time: hours, timeType: 'Hours'),
-                  TimeContainer(time: minutes, timeType: 'Minutes'),
-                  TimeContainer(time: seconds, timeType: 'Seconds'),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Text(
-                'Time since you last relapsed',
-                style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
-              ),
-              const SizedBox(height: 20),
-              AppCustomButton(
-                onPressed: () {
-                  context.router.push(const RelapseLogRoute());
-                },
-                buttonText: 'Relapse',
-                isFullWidth: true,
-              ),
-            ],
-          ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        child: Column(
+          children: [
+            Text(
+              'You\'ve been clean for',
+              style: context.textTheme.bodyMedium?.copyWith(fontSize: 25),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '$days days',
+              style: context.textTheme.displayLarge?.copyWith(fontSize: 30),
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TimeContainer(time: days, timeType: 'Days'),
+                TimeContainer(time: hours, timeType: 'Hours'),
+                TimeContainer(time: minutes, timeType: 'Minutes'),
+                TimeContainer(time: seconds, timeType: 'Seconds'),
+              ],
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'Time since you last relapsed',
+              style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
+            ),
+            const SizedBox(height: 20),
+            AppCustomButton(
+              onPressed: () {
+                context.router.push(const RelapseLogRoute());
+              },
+              buttonText: 'Relapse',
+              isFullWidth: true,
+            ),
+            const SizedBox(height: 20),
+
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Next Award', style: context.textTheme.displayLarge),
+            ),
+
+            const SizedBox(height: 20),
+
+            AchievementCardWidget(
+              title: nextAward?.title ?? '',
+              dayAchieved: soberTime.inSeconds,
+              dayRequired: dayRequired * 24 * 60 * 60,
+            ),
+          ],
         ),
       ),
     );

@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_state.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/local_db/app_database.dart';
+import 'package:handbrake/models/award.dart';
+import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -169,5 +172,56 @@ class HomeCubit extends Cubit<HomeState> {
         selectedTriggerChip: () => null,
       ),
     );
+  }
+
+  Award? getNextAward() {
+    final soberDays = state.soberTime.inDays;
+
+    for (Award award in awards) {
+      if (soberDays < award.daysRequired) {
+        return award;
+      }
+    }
+
+    return null;
+  }
+
+  Future<void> checkAndShowAchievementDialog(BuildContext context) async {
+    final prefs = getIt<SharedPreferences>();
+    final currentDays = state.soberTime.inDays;
+
+    for (var award in awards) {
+      if (currentDays >= award.daysRequired) {
+        final lastShown =
+            prefs.getString(SharedPrefStrings.lastAchievedAward) ?? '';
+
+        if (context.mounted && lastShown != award.title) {
+          // Show dialog
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              backgroundColor: AppColors.whiteColor,
+              title: const Text("🎉 Award Unlocked!"),
+              content: Text("You’ve unlocked: ${award.title}"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Awesome!"),
+                ),
+              ],
+            ),
+          );
+
+          // Save this achievement as shown
+          await prefs.setString(
+            SharedPrefStrings.lastAchievedAward,
+            award.title,
+          );
+          break; // Only show one achievement at a time
+        }
+      }
+    }
   }
 }

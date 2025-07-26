@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
-import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/theme/app_colors.dart';
 
 class StatsCardWidget extends StatelessWidget {
@@ -16,10 +14,6 @@ class StatsCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final focusedDate = context.watch<StatsCubit>().state.focusedDate;
-
-    final focusedDateMonthYear = "${focusedDate.year}-${focusedDate.month}";
-
     return SizedBox(
       width: double.infinity,
 

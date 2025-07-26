@@ -15,7 +15,7 @@ class AchievementCardWidget extends StatelessWidget {
   final int dayAchieved;
   final int dayRequired;
 
-  Color _getProgressColor(int percentage) {
+  Color _getProgressColor(double percentage) {
     if (percentage < 50) {
       return AppColors.progressBarLowColor;
     } else if (percentage < 80) {
@@ -27,7 +27,8 @@ class AchievementCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int percentage = (dayAchieved / dayRequired * 100).round();
+    final int clampedElapsed = dayAchieved.clamp(0, dayRequired);
+    final double percentage = (clampedElapsed / dayRequired) * 100;
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
@@ -63,7 +64,7 @@ class AchievementCardWidget extends StatelessWidget {
             if (dayAchieved >= dayRequired)
               const Center(child: Text('Achieved!'))
             else
-              Center(child: Text('$percentage% completed')),
+              Center(child: Text('${percentage.toInt()}% completed')),
           ],
         ),
       ),
