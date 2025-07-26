@@ -11,6 +11,7 @@ class AppRouter extends RootStackRouter {
       AutoRoute(page: LastRelapseRoute.page),
       AutoRoute(page: RelapseLogRoute.page),
       AutoRoute(page: JournalEntryRoute.page),
+
       AutoRoute(
         page: NavigationRoute.page,
         children: [
@@ -18,6 +19,7 @@ class AppRouter extends RootStackRouter {
           AutoRoute(page: StatsRoute.page),
           AutoRoute(page: JournalViewRoute.page),
           AutoRoute(page: SettingsRoute.page),
+          AutoRoute(page: AchievementsRoute.page),
         ],
       ),
     ];

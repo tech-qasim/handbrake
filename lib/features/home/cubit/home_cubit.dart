@@ -24,6 +24,7 @@ class HomeCubit extends Cubit<HomeState> {
 
     if (result != null) {
       emit(state.copyWith(relapses: [...state.relapses, result]));
+      initializeTimer();
     }
 
     await getIt<SharedPreferences>().setBool(

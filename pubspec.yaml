@@ -30,6 +30,7 @@ dependencies:
   easy_date_timeline: ^2.0.9
   intl: ^0.20.2
   table_calendar: ^3.2.0
+  sqlite3_flutter_libs: ^0.5.37
 
 dev_dependencies:
   flutter_test:

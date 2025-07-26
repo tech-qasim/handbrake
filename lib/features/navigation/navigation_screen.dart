@@ -14,6 +14,7 @@ class NavigationScreen extends StatelessWidget {
       routes: [
         const CounterRoute(),
         const StatsRoute(),
+        const AchievementsRoute(),
         const JournalViewRoute(),
         const SettingsRoute(),
       ],
@@ -88,6 +89,14 @@ class BottomNavigationWidget extends StatelessWidget {
                 ),
                 icon: Icon(Icons.bar_chart),
                 label: 'Stats',
+              ),
+              BottomNavigationBarItem(
+                activeIcon: Icon(
+                  Icons.celebration,
+                  color: AppColors.primaryColor,
+                ),
+                icon: Icon(Icons.celebration),
+                label: 'Awards',
               ),
               BottomNavigationBarItem(
                 activeIcon: Icon(Icons.book, color: AppColors.primaryColor),

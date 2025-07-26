@@ -13,4 +13,8 @@ class AppColors {
   static const textfieldBgColor = Color(0xffF0F2F5);
   static const journalCardBgColor = Color(0xffEEEEEE);
   static const statsCardBorderColor = Color(0xffD1DBE8);
+  static const awardSubtitleColor = Color(0xff616161);
+  static const progressBarHighColor = Color(0xff00FF00);
+  static const progressBarMediumColor = Color(0xffFFD700);
+  static const progressBarLowColor = Color(0xffCD5C5C);
 }
