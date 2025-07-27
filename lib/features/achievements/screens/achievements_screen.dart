@@ -12,7 +12,12 @@ class AchievementsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final soberDays = context.watch<HomeCubit>().state.soberTime.inSeconds;
+    final soberTime = context.watch<HomeCubit>().state.soberTime;
+    final longestStreak = context
+        .watch<HomeCubit>()
+        .state
+        .longestStreakinSeconds;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Awards', style: context.textTheme.displayLarge),
@@ -22,10 +27,13 @@ class AchievementsScreen extends StatelessWidget {
         itemCount: awards.length,
         itemBuilder: (context, index) {
           final award = awards[index];
+          final isAwardAchieved = context.read<HomeCubit>().isAwardAchieved(
+            award,
+          );
           return AchievementCardWidget(
             title: award.title,
-            dayAchieved: soberDays,
-            dayRequired: award.daysRequired * 24 * 60 * 60,
+            dayAchieved: isAwardAchieved ? longestStreak : soberTime.inSeconds,
+            dayRequired: award.daysRequired.toSeconds,
           );
         },
         separatorBuilder: (BuildContext context, int index) {

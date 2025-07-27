@@ -11,6 +11,7 @@ class SharedPrefStrings {
   static const String isUserOnboarded = 'isUserOnboarded';
   static const String longestStreak = 'longestStreak';
   static const String lastAchievedAward = 'lastAchievedAward';
+  static const String recentStreak = "recentStreak";
 }
 
 List<String> triggers = [

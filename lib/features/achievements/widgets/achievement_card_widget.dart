@@ -29,6 +29,7 @@ class AchievementCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final int clampedElapsed = dayAchieved.clamp(0, dayRequired);
     final double percentage = (clampedElapsed / dayRequired) * 100;
+    final goal = dayRequired ~/ Duration.secondsPerDay;
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
@@ -43,7 +44,7 @@ class AchievementCardWidget extends StatelessWidget {
             ),
             const SizedBox(height: 3),
             Text(
-              'Stay clean for $dayRequired days',
+              'Stay clean for $goal ${goal == 1 ? 'day' : 'days'}',
               style: context.textTheme.bodyMedium?.copyWith(
                 fontSize: 13,
                 color: AppColors.awardSubtitleColor,

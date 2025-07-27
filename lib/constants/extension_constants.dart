@@ -156,3 +156,12 @@ extension WidgetsModifier on Widget {
     );
   }
 }
+
+extension DaysToSecondsExtension on int {
+  int get toSeconds => this * 24 * 60 * 60;
+  double get toDays => this / (24 * 60 * 60);
+}
+
+extension SecondsToDays on int {
+  int get toWholeDays => (this / (24 * 60 * 60)).floor();
+}

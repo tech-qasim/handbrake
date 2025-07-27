@@ -4,6 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_state.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
@@ -36,6 +38,12 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
+  int? loadLongestStreak() {
+    int? recentStreak =
+        getIt<SharedPreferences>().getInt(SharedPrefStrings.longestStreak) ?? 0;
+    return recentStreak;
+  }
+
   void addRelapse(
     DateTime relapseDateTime,
     String trigger,
@@ -51,6 +59,7 @@ class HomeCubit extends Cubit<HomeState> {
       day: Value(date.day),
       monthYear: Value("${date.year}-${date.month}"),
     );
+
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 
     if (result != null) {
@@ -116,11 +125,11 @@ class HomeCubit extends Cubit<HomeState> {
       getIt<SharedPreferences>().setInt(
         SharedPrefStrings.longestStreak,
         currentStreak,
-      );
+      ); //storing in days
 
-      emit(state.copyWith(longestStreak: currentStreak));
+      emit(state.copyWith(longestStreakinSeconds: currentStreak.toSeconds));
     } else {
-      emit(state.copyWith(longestStreak: longestStreak));
+      emit(state.copyWith(longestStreakinSeconds: longestStreak.toSeconds));
     }
 
     return currentStreak;
@@ -145,12 +154,26 @@ class HomeCubit extends Cubit<HomeState> {
 
   void _onTick(Timer timer) async {
     final relapse = state.lastRelapseDate;
-    final updatedTime = DateTime.now().difference(relapse);
-    setSoberTime(updatedTime);
+    final updatedSoberTime = DateTime.now().difference(relapse);
+
+    final currentStreakInSeconds = updatedSoberTime.inSeconds;
+    final previousLongestInSeconds = state.longestStreakinSeconds;
+
+    final updatedLongestInSeconds =
+        currentStreakInSeconds > previousLongestInSeconds
+        ? currentStreakInSeconds
+        : previousLongestInSeconds;
+
+    setSoberTimeAndLongestStreak(updatedSoberTime, updatedLongestInSeconds);
   }
 
-  void setSoberTime(Duration soberTime) {
-    emit(state.copyWith(soberTime: soberTime));
+  void setSoberTimeAndLongestStreak(Duration soberTime, int updatedLongest) {
+    emit(
+      state.copyWith(
+        soberTime: soberTime,
+        longestStreakinSeconds: updatedLongest,
+      ),
+    );
   }
 
   void setTriggerChip(String? trigger) {
@@ -175,10 +198,10 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Award? getNextAward() {
-    final soberDays = state.soberTime.inDays;
+    final longestStreak = state.longestStreakinSeconds.toDays;
 
     for (Award award in awards) {
-      if (soberDays < award.daysRequired) {
+      if (longestStreak < award.daysRequired) {
         return award;
       }
     }
@@ -223,5 +246,15 @@ class HomeCubit extends Cubit<HomeState> {
         }
       }
     }
+  }
+
+  bool isAwardAchieved(Award award) {
+    final longestStreak = state.longestStreakinSeconds.toDays;
+
+    if (award.daysRequired <= longestStreak) {
+      return true;
+    }
+
+    return false;
   }
 }

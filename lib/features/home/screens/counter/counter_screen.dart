@@ -37,6 +37,12 @@ class _CounterScreenState extends State<CounterScreen> {
     final nextAward = context.watch<HomeCubit>().getNextAward();
     final dayRequired = nextAward?.daysRequired ?? 0;
 
+    final longestStreak = context.watch<HomeCubit>().loadLongestStreak() ?? 0;
+
+    final isAwardAchieved = context.watch<HomeCubit>().isAwardAchieved(
+      nextAward!,
+    );
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -88,9 +94,11 @@ class _CounterScreenState extends State<CounterScreen> {
             const SizedBox(height: 20),
 
             AchievementCardWidget(
-              title: nextAward?.title ?? '',
-              dayAchieved: soberTime.inSeconds,
-              dayRequired: dayRequired * 24 * 60 * 60,
+              title: nextAward.title,
+              dayAchieved: isAwardAchieved
+                  ? longestStreak
+                  : soberTime.inSeconds,
+              dayRequired: dayRequired.toSeconds,
             ),
           ],
         ),
