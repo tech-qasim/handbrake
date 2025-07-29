@@ -5,6 +5,7 @@ final String appName = 'Handbrake';
 class AssetIcons {
   static const String path = "assets/icons";
   static const String quitIcon = "$path/fist.png";
+  static const String blessingIon = "$path/blessing.png";
 }
 
 class SharedPrefStrings {
@@ -12,6 +13,8 @@ class SharedPrefStrings {
   static const String longestStreak = 'longestStreak';
   static const String lastAchievedAward = 'lastAchievedAward';
   static const String recentStreak = "recentStreak";
+  static const String lastRewardTime = "lastRewardTime";
+  static const String blessingCount = "blessingCount";
 }
 
 List<String> triggers = [

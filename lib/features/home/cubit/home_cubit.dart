@@ -211,10 +211,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> checkAndShowAchievementDialog(BuildContext context) async {
     final prefs = getIt<SharedPreferences>();
-    final currentDays = state.soberTime.inDays;
+    final longestStreak = state.longestStreakinSeconds.toDays;
 
     for (var award in awards) {
-      if (currentDays >= award.daysRequired) {
+      if (longestStreak >= award.daysRequired) {
         final lastShown =
             prefs.getString(SharedPrefStrings.lastAchievedAward) ?? '';
 
@@ -256,5 +256,31 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     return false;
+  }
+
+  void giveDailyBlessing() async {
+    final prefs = getIt<SharedPreferences>();
+    final lastRewardTime = prefs.getString(SharedPrefStrings.lastRewardTime);
+    final now = DateTime.now();
+    final lastReward = lastRewardTime != null
+        ? DateTime.tryParse(lastRewardTime)
+        : null;
+
+    if (lastReward == null || now.difference(lastReward).inHours >= 24) {
+      final blessingCount = prefs.getInt(SharedPrefStrings.blessingCount) ?? 0;
+      prefs.setInt(SharedPrefStrings.blessingCount, blessingCount + 2);
+      prefs.setString(SharedPrefStrings.lastRewardTime, now.toIso8601String());
+      emit(state.copyWith(blessingCount: blessingCount + 2));
+      debugPrint('✅ 2 coins added. New balance: ${blessingCount + 2}');
+    } else {
+      debugPrint('⏳ Reward already claimed. Try again later.');
+    }
+  }
+
+  Future<int> getBlessingCount() async {
+    final prefs = getIt<SharedPreferences>();
+    final blessings = prefs.getInt(SharedPrefStrings.blessingCount) ?? 0;
+    emit(state.copyWith(blessingCount: blessings));
+    return blessings;
   }
 }

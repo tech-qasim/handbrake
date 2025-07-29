@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
+import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/achievements/widgets/achievement_card_widget.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
@@ -19,8 +20,10 @@ class CounterScreen extends StatefulWidget {
 class _CounterScreenState extends State<CounterScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<HomeCubit>().checkAndShowAchievementDialog(context);
+      context.read<HomeCubit>().giveDailyBlessing();
+      await context.read<HomeCubit>().getBlessingCount();
     });
     super.initState();
   }
@@ -43,10 +46,21 @@ class _CounterScreenState extends State<CounterScreen> {
       nextAward!,
     );
 
+    final blessings = context.watch<HomeCubit>().state.blessingCount;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Home', style: context.textTheme.displayLarge),
+        actions: [
+          Row(
+            children: [
+              Image.asset(AssetIcons.blessingIon, height: 40, width: 40),
+              Text(blessings.toString(), style: context.textTheme.displayLarge),
+              const SizedBox(width: 15),
+            ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
