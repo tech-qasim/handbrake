@@ -38,6 +38,8 @@ class _RelapseLogScreenState extends State<RelapseLogScreen> {
         .state
         .selectedEmotionChip;
 
+    final triggers = context.watch<HomeCubit>().state.triggers;
+
     final urgeIntensity = context.watch<HomeCubit>().state.urgeIntensity;
     return Scaffold(
       appBar: AppBar(
@@ -65,20 +67,84 @@ class _RelapseLogScreenState extends State<RelapseLogScreen> {
             const SizedBox(height: 15),
             Wrap(
               spacing: 10,
-              children: triggers.map((option) {
-                return ChoiceChip(
-                  showCheckmark: false,
-                  label: Text(option),
-                  selected: selectedTriggerChip == option,
-                  onSelected: (bool selected) {
-                    if (selected) {
-                      context.read<HomeCubit>().setTriggerChip(option);
-                    } else {
-                      null;
-                    }
+              children: [
+                ...triggers.map((option) {
+                  return ChoiceChip(
+                    showCheckmark: false,
+                    label: Text(option),
+                    selected: selectedTriggerChip == option,
+                    onSelected: (bool selected) {
+                      if (selected) {
+                        context.read<HomeCubit>().setTriggerChip(option);
+                      }
+                    },
+                  );
+                }),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        final TextEditingController triggerController =
+                            TextEditingController();
+                        return AlertDialog(
+                          backgroundColor: AppColors.whiteColor,
+                          title: const Text('Add New Trigger'),
+                          content: TextField(
+                            controller: triggerController,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter trigger',
+                            ),
+                            autofocus: true,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                final newTrigger = triggerController.text
+                                    .trim();
+                                if (newTrigger.isNotEmpty) {
+                                  context.read<HomeCubit>().addNewTrigger(
+                                    newTrigger,
+                                  );
+                                  // Navigator.of(context).pop();
+                                }
+                              },
+                              child: const Text('Add'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
-                );
-              }).toList(),
+                  child: Chip(
+                    side: const BorderSide(color: AppColors.whiteColor),
+                    backgroundColor: AppColors.primaryColor,
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.add,
+                          size: 18,
+                          color: AppColors.whiteColor,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          'Add',
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Text(
@@ -131,12 +197,6 @@ class _RelapseLogScreenState extends State<RelapseLogScreen> {
             ),
 
             const SizedBox(height: 20),
-
-            const AppTextField(
-              hintText: 'Reflect on what happened',
-              minLines: 4,
-              lines: 20,
-            ),
 
             const SizedBox(height: 30),
 

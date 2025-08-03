@@ -1,3 +1,4 @@
+import 'package:handbrake/local_db/app_database.dart';
 import 'package:handbrake/models/award.dart';
 
 final String appName = 'Handbrake';
@@ -17,7 +18,7 @@ class SharedPrefStrings {
   static const String blessingCount = "blessingCount";
 }
 
-List<String> triggers = [
+List<String> triggersData = [
   'Boredom',
   'Stress',
   'Social Media',

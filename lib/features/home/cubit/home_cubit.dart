@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -30,6 +31,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (result != null) {
       emit(state.copyWith(relapses: [...state.relapses, result]));
       initializeTimer();
+      giveAwardOnOnboarding();
     }
 
     await getIt<SharedPreferences>().setBool(
@@ -71,6 +73,7 @@ class HomeCubit extends Cubit<HomeState> {
       );
 
       statsCubit.addRelapseToRelapseHistoryMap(result);
+      statsCubit.getTriggerCount();
       // setLastRelapseDateTime();
     }
   }
@@ -195,6 +198,7 @@ class HomeCubit extends Cubit<HomeState> {
         selectedTriggerChip: () => null,
       ),
     );
+    getTriggers();
   }
 
   Award? getNextAward() {
@@ -213,38 +217,39 @@ class HomeCubit extends Cubit<HomeState> {
     final prefs = getIt<SharedPreferences>();
     final longestStreak = state.longestStreakinSeconds.toDays;
 
-    for (var award in awards) {
-      if (longestStreak >= award.daysRequired) {
-        final lastShown =
-            prefs.getString(SharedPrefStrings.lastAchievedAward) ?? '';
+    final mostRecentAward = awards.lastWhereOrNull(
+      (day) => day.daysRequired <= longestStreak,
+    );
 
-        if (context.mounted && lastShown != award.title) {
-          // Show dialog
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              backgroundColor: AppColors.whiteColor,
-              title: const Text("🎉 Award Unlocked!"),
-              content: Text("You’ve unlocked: ${award.title}"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Awesome!"),
-                ),
-              ],
+    if (mostRecentAward == null) {
+      return;
+    }
+
+    final lastShown =
+        prefs.getString(SharedPrefStrings.lastAchievedAward) ?? '';
+
+    if (context.mounted && lastShown != mostRecentAward.title) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          title: const Text("🎉 Award Unlocked!"),
+          content: Text("You’ve unlocked: ${mostRecentAward.title}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Awesome!"),
             ),
-          );
+          ],
+        ),
+      );
 
-          // Save this achievement as shown
-          await prefs.setString(
-            SharedPrefStrings.lastAchievedAward,
-            award.title,
-          );
-          break; // Only show one achievement at a time
-        }
-      }
+      await prefs.setString(
+        SharedPrefStrings.lastAchievedAward,
+        mostRecentAward.title,
+      );
     }
   }
 
@@ -269,7 +274,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (lastReward == null || now.difference(lastReward).inHours >= 24) {
       final blessingCount = prefs.getInt(SharedPrefStrings.blessingCount) ?? 0;
       prefs.setInt(SharedPrefStrings.blessingCount, blessingCount + 2);
-      prefs.setString(SharedPrefStrings.lastRewardTime, now.toIso8601String());
+      prefs.setString(SharedPrefStrings.lastRewardTime, now.toString());
       emit(state.copyWith(blessingCount: blessingCount + 2));
       debugPrint('✅ 2 coins added. New balance: ${blessingCount + 2}');
     } else {
@@ -282,5 +287,37 @@ class HomeCubit extends Cubit<HomeState> {
     final blessings = prefs.getInt(SharedPrefStrings.blessingCount) ?? 0;
     emit(state.copyWith(blessingCount: blessings));
     return blessings;
+  }
+
+  void giveAwardOnOnboarding() {
+    final lastRelapseDate = state.lastRelapseDate;
+    final cleanDays = DateTime.now().difference(lastRelapseDate).inDays;
+    final prefs = getIt<SharedPreferences>();
+    final blessingPerDay = 2;
+    final totalBlessingOnOnboarding = cleanDays * blessingPerDay;
+    prefs.setInt(SharedPrefStrings.blessingCount, totalBlessingOnOnboarding);
+    prefs.setString(
+      SharedPrefStrings.lastRewardTime,
+      DateTime.now().toString(),
+    );
+    emit(state.copyWith(blessingCount: totalBlessingOnOnboarding));
+  }
+
+  void addNewTrigger(String trigger) async {
+    final result = await getIt<AppDatabase>().relapseDao.addNewTrigger(
+      TriggersCompanion(trigger: Value(trigger)),
+    );
+
+    if (result != null) {
+      emit(state.copyWith(triggers: [...state.triggers, trigger]));
+    }
+  }
+
+  void getTriggers() async {
+    if (state.triggers.length <= 5) {
+      final triggerList = await getIt<AppDatabase>().relapseDao.getTriggers();
+      List<String> triggerStrings = triggerList.map((t) => t.trigger).toList();
+      emit(state.copyWith(triggers: [...state.triggers, ...triggerStrings]));
+    }
   }
 }

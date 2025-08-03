@@ -1,12 +1,13 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide Trigger;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:handbrake/local_db/app_database.dart';
 import 'package:handbrake/local_db/tables/relapses.dart';
 import 'package:handbrake/local_db/tables/stats.dart';
+import 'package:handbrake/local_db/tables/triggers.dart';
 part 'relapse_dao.g.dart';
 
-@DriftAccessor(tables: [Relapses, Stats])
+@DriftAccessor(tables: [Relapses, Stats, Triggers])
 class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
   RelapseDao(super.db);
 
@@ -97,5 +98,31 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
     return select(stats).getSingleOrNull();
   }
 
-  void saveStats() {}
+  Future<Trigger?> addNewTrigger(TriggersCompanion trigger) async {
+    try {
+      final id = await into(triggers).insert(trigger);
+      return (await (select(
+        triggers,
+      )..where((tbl) => tbl.id.equals(id))).getSingle());
+    } on SqliteException catch (e) {
+      debugPrint('sqlite error : ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('unknown error occured : $e');
+      return null;
+    }
+  }
+
+  Future<List<Trigger>> getTriggers() async {
+    try {
+      final triggerList = await select(triggers).get();
+      return triggerList;
+    } on SqliteException catch (e) {
+      debugPrint('SQLite Error: ${e.message}');
+      return [];
+    } catch (e) {
+      debugPrint('Unknown error while fetching products: $e');
+      return [];
+    }
+  }
 }

@@ -6,4 +6,5 @@ part of 'relapse_dao.dart';
 mixin _$RelapseDaoMixin on DatabaseAccessor<AppDatabase> {
   $RelapsesTable get relapses => attachedDatabase.relapses;
   $StatsTable get stats => attachedDatabase.stats;
+  $TriggersTable get triggers => attachedDatabase.triggers;
 }

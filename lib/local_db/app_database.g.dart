@@ -1047,12 +1047,206 @@ class StatsCompanion extends UpdateCompanion<Stat> {
   }
 }
 
+class $TriggersTable extends Triggers with TableInfo<$TriggersTable, Trigger> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TriggersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _triggerMeta = const VerificationMeta(
+    'trigger',
+  );
+  @override
+  late final GeneratedColumn<String> trigger = GeneratedColumn<String>(
+    'trigger',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, trigger];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'triggers';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Trigger> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('trigger')) {
+      context.handle(
+        _triggerMeta,
+        trigger.isAcceptableOrUnknown(data['trigger']!, _triggerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_triggerMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Trigger map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Trigger(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      trigger: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger'],
+      )!,
+    );
+  }
+
+  @override
+  $TriggersTable createAlias(String alias) {
+    return $TriggersTable(attachedDatabase, alias);
+  }
+}
+
+class Trigger extends DataClass implements Insertable<Trigger> {
+  final int id;
+  final String trigger;
+  const Trigger({required this.id, required this.trigger});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['trigger'] = Variable<String>(trigger);
+    return map;
+  }
+
+  TriggersCompanion toCompanion(bool nullToAbsent) {
+    return TriggersCompanion(id: Value(id), trigger: Value(trigger));
+  }
+
+  factory Trigger.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Trigger(
+      id: serializer.fromJson<int>(json['id']),
+      trigger: serializer.fromJson<String>(json['trigger']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'trigger': serializer.toJson<String>(trigger),
+    };
+  }
+
+  Trigger copyWith({int? id, String? trigger}) =>
+      Trigger(id: id ?? this.id, trigger: trigger ?? this.trigger);
+  Trigger copyWithCompanion(TriggersCompanion data) {
+    return Trigger(
+      id: data.id.present ? data.id.value : this.id,
+      trigger: data.trigger.present ? data.trigger.value : this.trigger,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Trigger(')
+          ..write('id: $id, ')
+          ..write('trigger: $trigger')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, trigger);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Trigger &&
+          other.id == this.id &&
+          other.trigger == this.trigger);
+}
+
+class TriggersCompanion extends UpdateCompanion<Trigger> {
+  final Value<int> id;
+  final Value<String> trigger;
+  const TriggersCompanion({
+    this.id = const Value.absent(),
+    this.trigger = const Value.absent(),
+  });
+  TriggersCompanion.insert({
+    this.id = const Value.absent(),
+    required String trigger,
+  }) : trigger = Value(trigger);
+  static Insertable<Trigger> custom({
+    Expression<int>? id,
+    Expression<String>? trigger,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (trigger != null) 'trigger': trigger,
+    });
+  }
+
+  TriggersCompanion copyWith({Value<int>? id, Value<String>? trigger}) {
+    return TriggersCompanion(
+      id: id ?? this.id,
+      trigger: trigger ?? this.trigger,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (trigger.present) {
+      map['trigger'] = Variable<String>(trigger.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TriggersCompanion(')
+          ..write('id: $id, ')
+          ..write('trigger: $trigger')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $RelapsesTable relapses = $RelapsesTable(this);
   late final $JournalsTable journals = $JournalsTable(this);
   late final $StatsTable stats = $StatsTable(this);
+  late final $TriggersTable triggers = $TriggersTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1061,6 +1255,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     relapses,
     journals,
     stats,
+    triggers,
   ];
 }
 
@@ -1624,6 +1819,125 @@ typedef $$StatsTableProcessedTableManager =
       Stat,
       PrefetchHooks Function()
     >;
+typedef $$TriggersTableCreateCompanionBuilder =
+    TriggersCompanion Function({Value<int> id, required String trigger});
+typedef $$TriggersTableUpdateCompanionBuilder =
+    TriggersCompanion Function({Value<int> id, Value<String> trigger});
+
+class $$TriggersTableFilterComposer
+    extends Composer<_$AppDatabase, $TriggersTable> {
+  $$TriggersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get trigger => $composableBuilder(
+    column: $table.trigger,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TriggersTableOrderingComposer
+    extends Composer<_$AppDatabase, $TriggersTable> {
+  $$TriggersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get trigger => $composableBuilder(
+    column: $table.trigger,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TriggersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TriggersTable> {
+  $$TriggersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get trigger =>
+      $composableBuilder(column: $table.trigger, builder: (column) => column);
+}
+
+class $$TriggersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TriggersTable,
+          Trigger,
+          $$TriggersTableFilterComposer,
+          $$TriggersTableOrderingComposer,
+          $$TriggersTableAnnotationComposer,
+          $$TriggersTableCreateCompanionBuilder,
+          $$TriggersTableUpdateCompanionBuilder,
+          (Trigger, BaseReferences<_$AppDatabase, $TriggersTable, Trigger>),
+          Trigger,
+          PrefetchHooks Function()
+        > {
+  $$TriggersTableTableManager(_$AppDatabase db, $TriggersTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TriggersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TriggersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TriggersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> trigger = const Value.absent(),
+              }) => TriggersCompanion(id: id, trigger: trigger),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String trigger,
+              }) => TriggersCompanion.insert(id: id, trigger: trigger),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TriggersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TriggersTable,
+      Trigger,
+      $$TriggersTableFilterComposer,
+      $$TriggersTableOrderingComposer,
+      $$TriggersTableAnnotationComposer,
+      $$TriggersTableCreateCompanionBuilder,
+      $$TriggersTableUpdateCompanionBuilder,
+      (Trigger, BaseReferences<_$AppDatabase, $TriggersTable, Trigger>),
+      Trigger,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1634,4 +1948,6 @@ class $AppDatabaseManager {
       $$JournalsTableTableManager(_db, _db.journals);
   $$StatsTableTableManager get stats =>
       $$StatsTableTableManager(_db, _db.stats);
+  $$TriggersTableTableManager get triggers =>
+      $$TriggersTableTableManager(_db, _db.triggers);
 }

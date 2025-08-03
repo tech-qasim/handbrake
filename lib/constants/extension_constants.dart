@@ -165,3 +165,8 @@ extension DaysToSecondsExtension on int {
 extension SecondsToDays on int {
   int get toWholeDays => (this / (24 * 60 * 60)).floor();
 }
+
+extension SpaceExtension on num {
+  SizedBox get height => SizedBox(height: toDouble());
+  SizedBox get width => SizedBox(width: toDouble());
+}

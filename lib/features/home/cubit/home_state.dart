@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/local_db/app_database.dart';
 
 class HomeState {
@@ -14,6 +15,7 @@ class HomeState {
   double urgeIntensity;
   int longestStreakinSeconds;
   int blessingCount;
+  List<String> triggers;
   HomeState({
     required this.relapses,
     required this.lastRelapseDate,
@@ -26,6 +28,7 @@ class HomeState {
     required this.urgeIntensity,
     required this.longestStreakinSeconds,
     required this.blessingCount,
+    required this.triggers,
   });
   factory HomeState.initial() {
     return HomeState(
@@ -40,6 +43,7 @@ class HomeState {
       firstRelapseDate: DateTime.now(),
       longestStreakinSeconds: 0,
       blessingCount: 0,
+      triggers: triggersData,
     );
   }
 
@@ -55,6 +59,7 @@ class HomeState {
     DateTime? firstRelapseDate,
     int? longestStreakinSeconds,
     int? blessingCount,
+    List<String>? triggers,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
@@ -74,6 +79,7 @@ class HomeState {
           longestStreakinSeconds ?? this.longestStreakinSeconds,
 
       blessingCount: blessingCount ?? this.blessingCount,
+      triggers: triggers ?? this.triggers,
     );
   }
 }

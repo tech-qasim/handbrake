@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
+import 'package:handbrake/features/home/cubit/home_state.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
+import 'package:handbrake/features/stats/widgets/relapse_reason_graph_widget.dart';
 import 'package:handbrake/features/stats/widgets/stats_card_widget.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
@@ -22,10 +24,111 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   @override
   void initState() {
-    final date = "${DateTime.now().year}-${DateTime.now().month}";
-    context.read<StatsCubit>().getRelapseHistoryByMonth(date);
+    _loadStats();
     super.initState();
   }
+
+  Future<void> _loadStats() async {
+    final date = "${DateTime.now().year}-${DateTime.now().month}";
+    final statsCubit = context.read<StatsCubit>();
+
+    await statsCubit.getRelapseHistoryByMonth(date);
+    statsCubit.getTriggerCount();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chartSelectedDate = context.select<StatsCubit, DateTime>(
+      (cubit) => cubit.state.chartSelectedDate,
+    );
+
+    final firstRelapseTime = context.select<HomeCubit, DateTime>(
+      (cubit) => cubit.state.firstRelapseDate,
+    );
+
+    final relapseHistoryMap = context
+        .watch<StatsCubit>()
+        .state
+        .relapseHistoryMap;
+
+    final focusedDateMonthYear =
+        "${chartSelectedDate.year}-${chartSelectedDate.month}";
+
+    debugPrint(focusedDateMonthYear);
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('Stats', style: context.textTheme.displayLarge),
+      ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                return StatsCardWidget(
+                  title: 'Longest Streak',
+                  subtitle: state.longestStreakinSeconds.toDays
+                      .toInt()
+                      .toString(),
+                );
+              },
+            ),
+            const SizedBox(height: 15),
+            const RelapseTableCalendarWidget(),
+            const SizedBox(height: 10),
+            Card(
+              color: AppColors.whiteColor,
+              elevation: 0,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          context.read<StatsCubit>().goToPreviousMonth(
+                            firstRelapseTime,
+                          );
+
+                          context.read<StatsCubit>().getTriggerCount();
+                        },
+                        icon: const Icon(Icons.chevron_left),
+                      ),
+                      55.width,
+                      Text(
+                        chartSelectedDate.toMonthYear(),
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontSize: 17,
+                        ),
+                      ),
+                      55.width,
+                      IconButton(
+                        onPressed: () {
+                          context.read<StatsCubit>().goToNextMonth();
+
+                          context.read<StatsCubit>().getTriggerCount();
+                        },
+                        icon: const Icon(Icons.chevron_right),
+                      ),
+                    ],
+                  ),
+                  const RelapseReasonGraphWidget(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RelapseTableCalendarWidget extends StatelessWidget {
+  const RelapseTableCalendarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,172 +155,139 @@ class _StatsScreenState extends State<StatsScreen> {
             ?.length ??
         0;
 
-    final longestStreak = context
-        .watch<HomeCubit>()
-        .state
-        .longestStreakinSeconds;
-
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('Stats', style: context.textTheme.displayLarge),
-      ),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StatsCardWidget(
-              title: 'Longest Streak',
-              subtitle: longestStreak.toDays.toInt().toString(),
-            ),
-            const SizedBox(height: 15),
-            Card(
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TableCalendar(
-                      headerStyle: const HeaderStyle(
-                        titleCentered: true,
-                        formatButtonVisible: false,
-                      ),
+            TableCalendar(
+              headerStyle: const HeaderStyle(
+                titleCentered: true,
+                formatButtonVisible: false,
+              ),
 
-                      calendarStyle: CalendarStyle(
-                        outsideDaysVisible: false,
-                        isTodayHighlighted: true,
-                        todayDecoration: BoxDecoration(
-                          color: AppColors.primaryColor.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        todayTextStyle: context.textTheme.bodyMedium!.copyWith(
+              calendarStyle: CalendarStyle(
+                outsideDaysVisible: false,
+                isTodayHighlighted: true,
+                todayDecoration: BoxDecoration(
+                  color: AppColors.primaryColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                todayTextStyle: context.textTheme.bodyMedium!.copyWith(
+                  color: AppColors.blackColor,
+                ),
+              ),
+
+              calendarFormat: CalendarFormat.month,
+              availableGestures: AvailableGestures.horizontalSwipe,
+              focusedDay: focusedDate,
+              firstDay: firstRelapse,
+              lastDay: DateTime.now(),
+
+              onPageChanged: (focusedDay) {
+                debugPrint(focusedDay.toString());
+                final date = "${focusedDay.year}-${focusedDay.month}";
+
+                context.read<StatsCubit>().setFocusedDate(focusedDay);
+                if (relapseHistoryMap.containsKey(date)) {
+                  return;
+                }
+                context.read<StatsCubit>().getRelapseHistoryByMonth(date);
+              },
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, day, events) {
+                  final date = "${day.year}-${day.month}";
+                  final relapseHistoryMapByMonth =
+                      relapseHistoryMap[date] ?? [];
+                  if (day == firstRelapseTime.atStartOfDayUtc) {
+                    return GestureDetector(
+                      onTap: () {
+                        context.showSnackBar(
+                          'The day you decided to quit addiction',
+                        );
+                      },
+                      child: Center(
+                        child:
+                            Image.asset(
+                              AssetIcons.quitIcon,
+                              scale: 4,
+                              color: AppColors.whiteColor,
+                            ).circularIconContainer(
+                              backgroundColor: AppColors.primaryColor,
+                            ),
+                      ),
+                    );
+                  }
+                  if (relapseHistoryMapByMonth.isNotEmpty) {
+                    for (int i = 0; i < relapseHistoryMapByMonth.length; i++) {
+                      final indexedDay = relapseHistoryMapByMonth[i].day;
+
+                      if (indexedDay == day.day) {
+                        return GestureDetector(
+                          onTap: () {
+                            context.router.push(
+                              RelapseDateRoute(
+                                date: day.toDayMonthYear(),
+                                relapses: relapseHistoryMapByMonth,
+                              ),
+                            );
+                          },
+                          child: Center(
+                            child:
+                                Text(
+                                  day.day.toString(),
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.whiteColor,
+                                  ),
+                                ).circularIconContainer(
+                                  backgroundColor: Colors.red,
+                                ),
+                          ),
+                        );
+                      }
+                    }
+                  } else if (relapseHistoryMapByMonth.isEmpty) {
+                    return Center(
+                      child: Text(
+                        day.day.toString(),
+                        style: context.textTheme.bodyMedium?.copyWith(
                           color: AppColors.blackColor,
                         ),
                       ),
-
-                      calendarFormat: CalendarFormat.month,
-                      availableGestures: AvailableGestures.horizontalSwipe,
-                      focusedDay: focusedDate,
-                      firstDay: firstRelapse,
-                      lastDay: DateTime.now(),
-
-                      onPageChanged: (focusedDay) {
-                        debugPrint(focusedDay.toString());
-                        final date = "${focusedDay.year}-${focusedDay.month}";
-
-                        context.read<StatsCubit>().setFocusedDate(focusedDay);
-                        if (relapseHistoryMap.containsKey(date)) {
-                          return;
-                        }
-                        context.read<StatsCubit>().getRelapseHistoryByMonth(
-                          date,
-                        );
-                      },
-                      calendarBuilders: CalendarBuilders(
-                        markerBuilder: (context, day, events) {
-                          final date = "${day.year}-${day.month}";
-                          final relapseHistoryMapByMonth =
-                              relapseHistoryMap[date] ?? [];
-                          if (day == firstRelapseTime.atStartOfDayUtc) {
-                            return GestureDetector(
-                              onTap: () {
-                                context.showSnackBar(
-                                  'The day you decided to quit addiction',
-                                );
-                              },
-                              child: Center(
-                                child:
-                                    Image.asset(
-                                      AssetIcons.quitIcon,
-                                      scale: 4,
-                                      color: AppColors.whiteColor,
-                                    ).circularIconContainer(
-                                      backgroundColor: AppColors.primaryColor,
-                                    ),
-                              ),
-                            );
-                          }
-                          if (relapseHistoryMapByMonth.isNotEmpty) {
-                            for (
-                              int i = 0;
-                              i < relapseHistoryMapByMonth.length;
-                              i++
-                            ) {
-                              final indexedDay =
-                                  relapseHistoryMapByMonth[i].day;
-
-                              if (indexedDay == day.day) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    context.router.push(
-                                      RelapseDateRoute(
-                                        date: day.toDayMonthYear(),
-                                        relapses: relapseHistoryMapByMonth,
-                                      ),
-                                    );
-                                  },
-                                  child: Center(
-                                    child:
-                                        Text(
-                                          day.day.toString(),
-                                          style: context.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors.whiteColor,
-                                              ),
-                                        ).circularIconContainer(
-                                          backgroundColor: Colors.red,
-                                        ),
-                                  ),
-                                );
-                              }
-                            }
-                          } else if (relapseHistoryMapByMonth.isEmpty) {
-                            return Center(child: Text(day.day.toString()));
-                          } else {
-                            return Center(child: Text(day.day.toString()));
-                          }
-                          return null;
-                        },
+                    );
+                  } else {
+                    return Center(
+                      child: Text(
+                        day.day.toString(),
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.blackColor,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Total Relapses',
-                            style: context.textTheme.bodyLarge?.copyWith(
-                              fontSize: 17,
-                            ),
-                          ),
-                          Text(
-                            relapseCount.toString(),
-                            style: context.textTheme.bodyLarge?.copyWith(
-                              fontSize: 17,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                    );
+                  }
+                  return null;
+                },
               ),
             ),
-            const SizedBox(height: 10),
-
-            // Text(
-            //   '${focusedDate.toMonthYear()} Stats',
-            //   style: context.textTheme.displayLarge?.copyWith(fontSize: 22),
-            // ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total Relapses',
+                    style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
+                  ),
+                  Text(
+                    relapseCount.toString(),
+                    style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
