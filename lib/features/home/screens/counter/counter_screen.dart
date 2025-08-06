@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/achievements/widgets/achievement_card_widget.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
+import 'package:handbrake/services/notification_service.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';
 
@@ -24,6 +26,17 @@ class _CounterScreenState extends State<CounterScreen> {
       context.read<HomeCubit>().checkAndShowAchievementDialog(context);
       context.read<HomeCubit>().giveDailyBlessing();
       await context.read<HomeCubit>().getBlessingCount();
+      final List<ActiveNotification> activeNotifications =
+          await NotificationService.flutterLocalNotificationsPlugin
+              .getActiveNotifications();
+
+      final List<PendingNotificationRequest> pendingNotificationRequests =
+          await NotificationService.flutterLocalNotificationsPlugin
+              .pendingNotificationRequests();
+
+      for (final request in pendingNotificationRequests) {
+        debugPrint(request.payload);
+      }
     });
     super.initState();
   }
