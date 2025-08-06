@@ -18,6 +18,10 @@ class SharedPrefStrings {
   static const String blessingCount = "blessingCount";
 }
 
+class NotificationsChannelStrings {
+  static const String rewardNotiChannel = 'reward_noti_channel';
+}
+
 List<String> triggersData = [
   'Boredom',
   'Stress',

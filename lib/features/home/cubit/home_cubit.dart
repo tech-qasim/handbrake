@@ -12,6 +12,7 @@ import 'package:handbrake/features/home/cubit/home_state.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/local_db/app_database.dart';
 import 'package:handbrake/models/award.dart';
+import 'package:handbrake/services/notification_service.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +32,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (result != null) {
       emit(state.copyWith(relapses: [...state.relapses, result]));
       initializeTimer();
+      scheduleAwardNotifications();
       giveAwardOnOnboarding();
     }
 
@@ -72,10 +74,28 @@ class HomeCubit extends Cubit<HomeState> {
         ),
       );
 
+      resetAndRescheduleNotifications();
       statsCubit.addRelapseToRelapseHistoryMap(result);
       statsCubit.getTriggerCount();
       // setLastRelapseDateTime();
     }
+  }
+
+  void scheduleAwardNotifications() {
+    for (Award award in awards) {
+      final result = isAwardAchieved(award);
+      if (!result) {
+        getIt<NotificationService>().scheduleRewardNotifications(
+          award.title,
+          award.daysRequired,
+        );
+      }
+    }
+  }
+
+  Future<void> resetAndRescheduleNotifications() async {
+    NotificationService.flutterLocalNotificationsPlugin.cancelAll();
+    scheduleAwardNotifications();
   }
 
   void changeLastRelapseDate(DateTime dateTime) {

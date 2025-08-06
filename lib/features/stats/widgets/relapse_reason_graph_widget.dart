@@ -22,7 +22,8 @@ class RelapseReasonGraphWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          if (triggerCountMap.isEmpty) const Text('No data available.'),
+          if (triggerCountMap.isEmpty)
+            const Center(child: Text('No data available.')),
           if (triggerCountMap.isNotEmpty)
             ...triggerCountMap.entries.map((entry) {
               final reason = entry.key;
@@ -30,10 +31,6 @@ class RelapseReasonGraphWidget extends StatelessWidget {
               final maxCount = triggerCountMap.values.isEmpty
                   ? 1
                   : triggerCountMap.values.reduce((a, b) => a > b ? a : b);
-
-              final randomColor = Color(
-                Random().nextInt(0xFFFFFFFF),
-              ).withOpacity(1.0);
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -75,7 +72,7 @@ class RelapseReasonGraphWidget extends StatelessWidget {
                         widthFactor: count / maxCount,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: randomColor,
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               // BoxShadow(

@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/features/journal/cubit/journal_cubit.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/routes/app_router.dart';
+import 'package:handbrake/services/notification_service.dart';
 import 'package:handbrake/theme/app_theme.dart';
 import 'package:handbrake/theme/theme_mode_cubit.dart';
 import 'package:handbrake/utils/di.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setUpDependencyInjector();
+  final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation(currentTimeZone));
+  await getIt<NotificationService>().init();
   runApp(MyApp());
 }
 
