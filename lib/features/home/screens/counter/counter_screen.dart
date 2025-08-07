@@ -26,16 +26,13 @@ class _CounterScreenState extends State<CounterScreen> {
       context.read<HomeCubit>().checkAndShowAchievementDialog(context);
       context.read<HomeCubit>().giveDailyBlessing();
       await context.read<HomeCubit>().getBlessingCount();
-      final List<ActiveNotification> activeNotifications =
-          await NotificationService.flutterLocalNotificationsPlugin
-              .getActiveNotifications();
 
       final List<PendingNotificationRequest> pendingNotificationRequests =
           await NotificationService.flutterLocalNotificationsPlugin
               .pendingNotificationRequests();
 
       for (final request in pendingNotificationRequests) {
-        debugPrint(request.payload);
+        debugPrint(request.body);
       }
     });
     super.initState();

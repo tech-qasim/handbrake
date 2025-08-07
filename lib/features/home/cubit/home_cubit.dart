@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_state.dart';
@@ -32,7 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (result != null) {
       emit(state.copyWith(relapses: [...state.relapses, result]));
       initializeTimer();
-      scheduleAwardNotifications();
+      scheduleNotificationsOnOnboarding();
       giveAwardOnOnboarding();
     }
 
@@ -81,6 +79,18 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  void scheduleNotificationsOnOnboarding() {
+    for (Award award in awards) {
+      final result = isAwardAchievedOnOnboarding(award);
+      if (!result) {
+        getIt<NotificationService>().scheduleRewardNotifications(
+          award.title,
+          award.daysRequired,
+        );
+      }
+    }
+  }
+
   void scheduleAwardNotifications() {
     for (Award award in awards) {
       final result = isAwardAchieved(award);
@@ -91,6 +101,18 @@ class HomeCubit extends Cubit<HomeState> {
         );
       }
     }
+  }
+
+  bool isAwardAchievedOnOnboarding(Award award) {
+    final relapse = state.lastRelapseDate;
+    final todayDate = DateTime.now();
+    final currentStreak = todayDate.difference(relapse).inDays;
+
+    if (award.daysRequired <= currentStreak) {
+      return true;
+    }
+
+    return false;
   }
 
   Future<void> resetAndRescheduleNotifications() async {

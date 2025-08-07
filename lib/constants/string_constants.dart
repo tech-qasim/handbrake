@@ -16,6 +16,7 @@ class SharedPrefStrings {
   static const String recentStreak = "recentStreak";
   static const String lastRewardTime = "lastRewardTime";
   static const String blessingCount = "blessingCount";
+  static const String reason = "reason";
 }
 
 class NotificationsChannelStrings {
