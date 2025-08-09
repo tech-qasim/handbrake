@@ -81,6 +81,23 @@ extension DateFormatting on DateTime {
   }
 }
 
+extension TimeOfDayFormatter on TimeOfDay {
+  /// Returns time in 24-hour format, e.g., "14:05"
+  String to24HourString() {
+    final h = hour.toString().padLeft(2, '0');
+    final m = minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  /// Returns time in 12-hour format with AM/PM, e.g., "02:05 PM"
+  String to12HourString() {
+    final h = hourOfPeriod.toString().padLeft(2, '0');
+    final m = minute.toString().padLeft(2, '0');
+    final periodStr = period == DayPeriod.am ? 'AM' : 'PM';
+    return '$h:$m $periodStr';
+  }
+}
+
 extension WidgetsModifier on Widget {
   @widgetFactory
   Widget padding(EdgeInsetsGeometry padding) {

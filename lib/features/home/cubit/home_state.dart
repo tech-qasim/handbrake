@@ -16,6 +16,7 @@ class HomeState {
   int longestStreakinSeconds;
   int blessingCount;
   List<String> triggers;
+  String reason;
   HomeState({
     required this.relapses,
     required this.lastRelapseDate,
@@ -29,6 +30,7 @@ class HomeState {
     required this.longestStreakinSeconds,
     required this.blessingCount,
     required this.triggers,
+    required this.reason,
   });
   factory HomeState.initial() {
     return HomeState(
@@ -44,6 +46,7 @@ class HomeState {
       longestStreakinSeconds: 0,
       blessingCount: 0,
       triggers: triggersData,
+      reason: '',
     );
   }
 
@@ -60,6 +63,7 @@ class HomeState {
     int? longestStreakinSeconds,
     int? blessingCount,
     List<String>? triggers,
+    String? reason,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
@@ -80,6 +84,7 @@ class HomeState {
 
       blessingCount: blessingCount ?? this.blessingCount,
       triggers: triggers ?? this.triggers,
+      reason: reason ?? this.reason,
     );
   }
 }

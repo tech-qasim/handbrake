@@ -23,6 +23,7 @@ class _CounterScreenState extends State<CounterScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.read<HomeCubit>().setReason();
       context.read<HomeCubit>().checkAndShowAchievementDialog(context);
       context.read<HomeCubit>().giveDailyBlessing();
       await context.read<HomeCubit>().getBlessingCount();
@@ -32,7 +33,7 @@ class _CounterScreenState extends State<CounterScreen> {
               .pendingNotificationRequests();
 
       for (final request in pendingNotificationRequests) {
-        debugPrint(request.body);
+        debugPrint(request.id.toString());
       }
     });
     super.initState();

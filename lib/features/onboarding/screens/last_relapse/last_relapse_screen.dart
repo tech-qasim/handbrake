@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
+import 'package:handbrake/features/settings/cubit/settings_cubit.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';

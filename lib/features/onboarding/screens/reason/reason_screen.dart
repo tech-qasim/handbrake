@@ -22,6 +22,15 @@ class ReasonScreen extends StatefulWidget {
 
 class _ReasonScreenState extends State<ReasonScreen> {
   final reasonController = TextEditingController();
+
+  @override
+  void initState() {
+    reasonController.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,20 +52,27 @@ class _ReasonScreenState extends State<ReasonScreen> {
                 style: context.textTheme.displayLarge?.copyWith(fontSize: 16),
               ),
               const SizedBox(height: 40),
-              const AppTextField(
+              AppTextField(
+                textController: reasonController,
                 hintText: 'Type here...',
                 lines: 10,
                 minLines: 8,
               ),
               const Spacer(),
-
               AppCustomButton(
                 onPressed: () {
-                  getIt<SharedPreferences>().setString(
-                    SharedPrefStrings.reason,
-                    reasonController.text,
-                  );
-                  context.router.replace(const LastRelapseRoute());
+                  if (reasonController.text.isEmpty) {
+                    context.showSnackBar('Please type something.');
+                  } else {
+                    getIt<SharedPreferences>().setString(
+                      SharedPrefStrings.reason,
+                      reasonController.text,
+                    );
+
+                    context.read<HomeCubit>().setReason();
+
+                    context.router.replace(const LastRelapseRoute());
+                  }
                 },
                 buttonText: 'Next',
                 isFullWidth: true,

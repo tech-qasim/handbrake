@@ -1,15 +1,23 @@
+import 'package:flutter/material.dart';
+import 'package:handbrake/models/settings.dart';
+
 class SettingsState {
-  final bool isJournalReminder;
+  final Settings appSettings;
 
-  SettingsState({required this.isJournalReminder});
+  SettingsState({required this.appSettings});
 
-  SettingsState copyWith({bool? isJournalReminder}) {
+  factory SettingsState.initial() {
     return SettingsState(
-      isJournalReminder: isJournalReminder ?? this.isJournalReminder,
+      appSettings: Settings(
+        isJournalReminder: true,
+        journalReminderTime: const TimeOfDay(hour: 8, minute: 0),
+        isReasonRemidner: true,
+        reasonReminder: const TimeOfDay(hour: 8, minute: 0),
+      ),
     );
   }
 
-  factory SettingsState.initial() {
-    return SettingsState(isJournalReminder: true);
+  SettingsState copyWith({Settings? appSettings}) {
+    return SettingsState(appSettings: appSettings ?? this.appSettings);
   }
 }

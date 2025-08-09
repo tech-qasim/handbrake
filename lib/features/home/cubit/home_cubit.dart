@@ -20,6 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this.statsCubit) : super(HomeState.initial());
 
   void addRelapseOnOnboarding(DateTime relapseDateTime) async {
+    final reason = state.reason;
     final relapse = RelapsesCompanion(
       relapseTime: Value(relapseDateTime),
       day: Value(relapseDateTime.day),
@@ -29,6 +30,16 @@ class HomeCubit extends Cubit<HomeState> {
 
     if (result != null) {
       emit(state.copyWith(relapses: [...state.relapses, result]));
+      getIt<NotificationService>().scheduleDailyReminders();
+      getIt<NotificationService>().scheduleDailyReminders(
+        title:
+            "✨ Reason Reminder so you don't forget why you started this journey.",
+        body: reason,
+        bigTextTitle:
+            "✨ Reason Reminder so you don't forget why you started this journey.",
+        bigTextContent: reason,
+        notificationId: NotificationsIds.reasonReminderId,
+      );
       initializeTimer();
       scheduleNotificationsOnOnboarding();
       giveAwardOnOnboarding();
@@ -80,24 +91,28 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void scheduleNotificationsOnOnboarding() {
-    for (Award award in awards) {
-      final result = isAwardAchievedOnOnboarding(award);
+    for (int i = 0; i < awards.length; i++) {
+      final id = NotificationsIds.awardId + i;
+      final result = isAwardAchievedOnOnboarding(awards[i]);
       if (!result) {
         getIt<NotificationService>().scheduleRewardNotifications(
-          award.title,
-          award.daysRequired,
+          awards[i].title,
+          awards[i].daysRequired,
+          id,
         );
       }
     }
   }
 
   void scheduleAwardNotifications() {
-    for (Award award in awards) {
-      final result = isAwardAchieved(award);
+    for (int i = 0; i < awards.length; i++) {
+      final id = NotificationsIds.awardId + i;
+      final result = isAwardAchieved(awards[i]);
       if (!result) {
         getIt<NotificationService>().scheduleRewardNotifications(
-          award.title,
-          award.daysRequired,
+          awards[i].title,
+          awards[i].daysRequired,
+          id,
         );
       }
     }
@@ -116,12 +131,22 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> resetAndRescheduleNotifications() async {
-    NotificationService.flutterLocalNotificationsPlugin.cancelAll();
+    cancelAwardNotifications();
     scheduleAwardNotifications();
   }
 
   void changeLastRelapseDate(DateTime dateTime) {
     emit(state.copyWith(lastRelapseDate: dateTime));
+  }
+
+  void cancelAwardNotifications() {
+    for (int i = 0; i < awards.length; i++) {
+      final id = NotificationsIds.awardId + i;
+      final result = isAwardAchieved(awards[i]);
+      if (!result) {
+        getIt<NotificationService>().cancelNotifications(id);
+      }
+    }
   }
 
   // Future<int?> getSoberCount() async {
@@ -360,6 +385,15 @@ class HomeCubit extends Cubit<HomeState> {
       final triggerList = await getIt<AppDatabase>().relapseDao.getTriggers();
       List<String> triggerStrings = triggerList.map((t) => t.trigger).toList();
       emit(state.copyWith(triggers: [...state.triggers, ...triggerStrings]));
+    }
+  }
+
+  void setReason() {
+    if (state.reason.isEmpty) {
+      final reason = getIt<SharedPreferences>().getString(
+        SharedPrefStrings.reason,
+      );
+      emit(state.copyWith(reason: reason));
     }
   }
 }

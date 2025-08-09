@@ -17,11 +17,14 @@ class SharedPrefStrings {
   static const String lastRewardTime = "lastRewardTime";
   static const String blessingCount = "blessingCount";
   static const String reason = "reason";
+  static const String settings = "settings";
   static const String journalReminder = 'journalReminder';
 }
 
 class NotificationsChannelStrings {
   static const String rewardNotiChannel = 'reward_noti_channel';
+  static const String dailyJournalReminderChannel =
+      'daily_journal_reminder_channel';
 }
 
 List<String> triggersData = [
@@ -48,3 +51,9 @@ final List<Award> awards = [
   Award(title: "Master of Urges", daysRequired: 75),
   Award(title: "Reborn", daysRequired: 90),
 ];
+
+class NotificationsIds {
+  static const int awardId = 1001;
+  static const int journalReminderId = 2001;
+  static const int reasonReminderId = 3001;
+}
