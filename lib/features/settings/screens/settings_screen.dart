@@ -5,6 +5,7 @@ import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/features/settings/cubit/settings_cubit.dart';
+import 'package:handbrake/models/settings.dart';
 import 'package:handbrake/services/notification_service.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
@@ -38,6 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(
           children: [
+            NotificationSettingCard(settings: settings),
+            20.height,
             SizedBox(
               width: double.infinity,
               child: Card(
@@ -52,120 +55,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Notifications',
+                        'Data',
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: AppColors.awardSubtitleColor,
                         ),
-                      ),
-                      10.height,
-                      ReminderSwitchTile(
-                        value: settings.isJournalReminder,
-                        title: 'Journal Reminder',
-                        time: settings.journalReminderTime,
-                        onTap: () {
-                          showTimePicker(
-                            context: context,
-                            initialTime: settings.journalReminderTime,
-                          ).then((pickedTime) {
-                            if (pickedTime != null) {
-                              if (context.mounted) {
-                                context.read<SettingsCubit>().saveSettings(
-                                  settings.copyWith(
-                                    journalReminderTime: pickedTime,
-                                  ),
-                                );
-
-                                if (settings.isJournalReminder) {
-                                  getIt<NotificationService>()
-                                      .scheduleDailyReminders(time: pickedTime);
-                                }
-                              }
-                            }
-                          });
-                        },
-                        onChange: (bool value) {
-                          final updateSettings = settings.copyWith(
-                            isJournalReminder: value,
-                          );
-                          context.read<SettingsCubit>().saveSettings(
-                            updateSettings,
-                          );
-
-                          if (value) {
-                            getIt<NotificationService>().scheduleDailyReminders(
-                              time: settings.journalReminderTime,
-                            );
-                          } else {
-                            getIt<NotificationService>()
-                                .cancelJournalReminderNotification();
-                          }
-                        },
-                      ),
-                      2.height,
-                      ReminderSwitchTile(
-                        value: settings.isReasonRemidner,
-                        title: 'Reason Reminder',
-                        time: settings.reasonReminder,
-                        onTap: () {
-                          showTimePicker(
-                            context: context,
-                            initialTime: settings.reasonReminder,
-                          ).then((pickedTime) {
-                            if (pickedTime != null) {
-                              if (context.mounted) {
-                                context.read<SettingsCubit>().saveSettings(
-                                  settings.copyWith(reasonReminder: pickedTime),
-                                );
-                                final reason = context
-                                    .read<HomeCubit>()
-                                    .state
-                                    .reason;
-                                if (settings.isReasonRemidner) {
-                                  getIt<NotificationService>().scheduleDailyReminders(
-                                    time: pickedTime,
-                                    title:
-                                        "✨ Reason Reminder so you don't forget why you started this journey.",
-                                    body: reason,
-                                    bigTextTitle:
-                                        "✨ Reason Reminder so you don't forget why you started this journey.",
-                                    bigTextContent: reason,
-                                    notificationId:
-                                        NotificationsIds.reasonReminderId,
-                                  );
-                                }
-                              }
-                            }
-                          });
-                        },
-                        onChange: (bool value) {
-                          final updateSettings = settings.copyWith(
-                            isReasonRemidner: value,
-                          );
-                          context.read<SettingsCubit>().saveSettings(
-                            updateSettings,
-                          );
-
-                          if (value) {
-                            final reason = context
-                                .read<HomeCubit>()
-                                .state
-                                .reason;
-                            getIt<NotificationService>().scheduleDailyReminders(
-                              time: settings.journalReminderTime,
-                              bigTextContent: reason,
-                              bigTextTitle:
-                                  "✨ Reason Reminder so you don't forget why you started this journey.",
-                              title:
-                                  "✨ Reason Reminder so you don't forget why you started this journey.",
-                              body: reason,
-                              notificationId: NotificationsIds.reasonReminderId,
-                            );
-                          } else {
-                            getIt<NotificationService>().cancelNotifications(
-                              NotificationsIds.reasonReminderId,
-                            );
-                          }
-                        },
                       ),
                     ],
                   ),
@@ -173,6 +66,136 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class NotificationSettingCard extends StatelessWidget {
+  const NotificationSettingCard({super.key, required this.settings});
+
+  final Settings settings;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Notifications',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.awardSubtitleColor,
+                ),
+              ),
+              10.height,
+              ReminderSwitchTile(
+                value: settings.isJournalReminder,
+                title: 'Journal Reminder',
+                time: settings.journalReminderTime,
+                onTap: () {
+                  showTimePicker(
+                    context: context,
+                    initialTime: settings.journalReminderTime,
+                  ).then((pickedTime) {
+                    if (pickedTime != null) {
+                      if (context.mounted) {
+                        context.read<SettingsCubit>().saveSettings(
+                          settings.copyWith(journalReminderTime: pickedTime),
+                        );
+
+                        if (settings.isJournalReminder) {
+                          getIt<NotificationService>().scheduleDailyReminders(
+                            time: pickedTime,
+                          );
+                        }
+                      }
+                    }
+                  });
+                },
+                onChange: (bool value) {
+                  final updateSettings = settings.copyWith(
+                    isJournalReminder: value,
+                  );
+                  context.read<SettingsCubit>().saveSettings(updateSettings);
+
+                  if (value) {
+                    getIt<NotificationService>().scheduleDailyReminders(
+                      time: settings.journalReminderTime,
+                    );
+                  } else {
+                    getIt<NotificationService>()
+                        .cancelJournalReminderNotification();
+                  }
+                },
+              ),
+              2.height,
+              ReminderSwitchTile(
+                value: settings.isReasonRemidner,
+                title: 'Reason Reminder',
+                time: settings.reasonReminder,
+                onTap: () {
+                  showTimePicker(
+                    context: context,
+                    initialTime: settings.reasonReminder,
+                  ).then((pickedTime) {
+                    if (pickedTime != null) {
+                      if (context.mounted) {
+                        context.read<SettingsCubit>().saveSettings(
+                          settings.copyWith(reasonReminder: pickedTime),
+                        );
+                        final reason = context.read<HomeCubit>().state.reason;
+                        if (settings.isReasonRemidner) {
+                          getIt<NotificationService>().scheduleDailyReminders(
+                            time: pickedTime,
+                            title:
+                                "✨ Reason Reminder so you don't forget why you started this journey.",
+                            body: reason,
+                            bigTextTitle:
+                                "✨ Reason Reminder so you don't forget why you started this journey.",
+                            bigTextContent: reason,
+                            notificationId: NotificationsIds.reasonReminderId,
+                          );
+                        }
+                      }
+                    }
+                  });
+                },
+                onChange: (bool value) {
+                  final updateSettings = settings.copyWith(
+                    isReasonRemidner: value,
+                  );
+                  context.read<SettingsCubit>().saveSettings(updateSettings);
+
+                  if (value) {
+                    final reason = context.read<HomeCubit>().state.reason;
+                    getIt<NotificationService>().scheduleDailyReminders(
+                      time: settings.journalReminderTime,
+                      bigTextContent: reason,
+                      bigTextTitle:
+                          "✨ Reason Reminder so you don't forget why you started this journey.",
+                      title:
+                          "✨ Reason Reminder so you don't forget why you started this journey.",
+                      body: reason,
+                      notificationId: NotificationsIds.reasonReminderId,
+                    );
+                  } else {
+                    getIt<NotificationService>().cancelNotifications(
+                      NotificationsIds.reasonReminderId,
+                    );
+                  }
+                },
+              ),
+              2.height,
+            ],
+          ),
         ),
       ),
     );

@@ -26,6 +26,13 @@ class Settings {
         'minute': journalReminderTime.minute,
       },
     });
+    result.addAll({
+      'reasonReminder': {
+        'hour': reasonReminder.hour,
+
+        'minute': reasonReminder.minute,
+      },
+    });
 
     return result;
   }
