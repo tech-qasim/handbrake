@@ -6,7 +6,6 @@ import 'package:handbrake/constants/extension_constants.dart';
 import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
-import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
 import 'package:handbrake/widgets/app_custom_button.dart';
 import 'package:handbrake/widgets/app_textfield.dart';
@@ -14,7 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class ReasonScreen extends StatefulWidget {
-  const ReasonScreen({super.key});
+  const ReasonScreen({super.key, this.reason});
+
+  final String? reason;
 
   @override
   State<ReasonScreen> createState() => _ReasonScreenState();
@@ -25,6 +26,8 @@ class _ReasonScreenState extends State<ReasonScreen> {
 
   @override
   void initState() {
+    reasonController.text = widget.reason ?? '';
+
     reasonController.addListener(() {
       setState(() {});
     });
@@ -69,12 +72,20 @@ class _ReasonScreenState extends State<ReasonScreen> {
                       reasonController.text,
                     );
 
-                    context.read<HomeCubit>().setReason();
+                    if (widget.reason == null) {
+                      context.read<HomeCubit>().setReason();
+                    } else {
+                      context.read<HomeCubit>().editReason();
+                    }
+                  }
 
+                  if (widget.reason == null) {
                     context.router.replace(const LastRelapseRoute());
+                  } else {
+                    context.router.maybePop();
                   }
                 },
-                buttonText: 'Next',
+                buttonText: widget.reason == null ? 'Next' : "Done",
                 isFullWidth: true,
               ),
             ],

@@ -388,6 +388,13 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  void editReason() {
+    final reason = getIt<SharedPreferences>().getString(
+      SharedPrefStrings.reason,
+    );
+    emit(state.copyWith(reason: reason));
+  }
+
   void setReason() {
     if (state.reason.isEmpty) {
       final reason = getIt<SharedPreferences>().getString(

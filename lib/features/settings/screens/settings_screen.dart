@@ -6,10 +6,10 @@ import 'package:handbrake/constants/string_constants.dart';
 import 'package:handbrake/features/home/cubit/home_cubit.dart';
 import 'package:handbrake/features/settings/cubit/settings_cubit.dart';
 import 'package:handbrake/models/settings.dart';
+import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/services/notification_service.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:handbrake/utils/di.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
@@ -60,6 +60,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: AppColors.awardSubtitleColor,
                         ),
                       ),
+                      15.height,
+                      GestureDetector(
+                        onTap: () {
+                          final reason = context.read<HomeCubit>().state.reason;
+                          context.router.push(ReasonRoute(reason: reason));
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              'Edit Reason to quit',
+                              style: context.textTheme.bodyLarge,
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -98,7 +115,7 @@ class NotificationSettingCard extends StatelessWidget {
               10.height,
               ReminderSwitchTile(
                 value: settings.isJournalReminder,
-                title: 'Journal Reminder',
+                title: 'Daily Journal Reminder',
                 time: settings.journalReminderTime,
                 onTap: () {
                   showTimePicker(
@@ -139,7 +156,7 @@ class NotificationSettingCard extends StatelessWidget {
               2.height,
               ReminderSwitchTile(
                 value: settings.isReasonRemidner,
-                title: 'Reason Reminder',
+                title: 'Daily Reason Reminder',
                 time: settings.reasonReminder,
                 onTap: () {
                   showTimePicker(

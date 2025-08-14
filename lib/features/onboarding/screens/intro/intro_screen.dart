@@ -35,7 +35,7 @@ class IntroScreen extends StatelessWidget {
               const Spacer(),
               AppCustomButton(
                 onPressed: () {
-                  context.router.replace(const ReasonRoute());
+                  context.router.replace(ReasonRoute());
                 },
                 buttonText: 'Get Started',
                 isFullWidth: true,

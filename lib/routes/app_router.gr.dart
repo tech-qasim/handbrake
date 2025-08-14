@@ -10,7 +10,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i14;
-import 'package:collection/collection.dart' as _i17;
+import 'package:collection/collection.dart' as _i18;
+import 'package:flutter/cupertino.dart' as _i17;
 import 'package:flutter/material.dart' as _i15;
 import 'package:handbrake/features/achievements/screens/achievements_screen.dart'
     as _i1;
@@ -187,18 +188,51 @@ class NavigationRoute extends _i14.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i8.ReasonScreen]
-class ReasonRoute extends _i14.PageRouteInfo<void> {
-  const ReasonRoute({List<_i14.PageRouteInfo>? children})
-    : super(ReasonRoute.name, initialChildren: children);
+class ReasonRoute extends _i14.PageRouteInfo<ReasonRouteArgs> {
+  ReasonRoute({
+    _i17.Key? key,
+    String? reason,
+    List<_i14.PageRouteInfo>? children,
+  }) : super(
+         ReasonRoute.name,
+         args: ReasonRouteArgs(key: key, reason: reason),
+         initialChildren: children,
+       );
 
   static const String name = 'ReasonRoute';
 
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i8.ReasonScreen();
+      final args = data.argsAs<ReasonRouteArgs>(
+        orElse: () => const ReasonRouteArgs(),
+      );
+      return _i8.ReasonScreen(key: args.key, reason: args.reason);
     },
   );
+}
+
+class ReasonRouteArgs {
+  const ReasonRouteArgs({this.key, this.reason});
+
+  final _i17.Key? key;
+
+  final String? reason;
+
+  @override
+  String toString() {
+    return 'ReasonRouteArgs{key: $key, reason: $reason}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ReasonRouteArgs) return false;
+    return key == other.key && reason == other.reason;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ reason.hashCode;
 }
 
 /// generated route for
@@ -254,12 +288,12 @@ class RelapseDateRouteArgs {
     if (other is! RelapseDateRouteArgs) return false;
     return key == other.key &&
         date == other.date &&
-        const _i17.ListEquality().equals(relapses, other.relapses);
+        const _i18.ListEquality().equals(relapses, other.relapses);
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ date.hashCode ^ const _i17.ListEquality().hash(relapses);
+      key.hashCode ^ date.hashCode ^ const _i18.ListEquality().hash(relapses);
 }
 
 /// generated route for

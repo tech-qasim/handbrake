@@ -25,8 +25,8 @@ class _CounterScreenState extends State<CounterScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<HomeCubit>().setReason();
       context.read<HomeCubit>().checkAndShowAchievementDialog(context);
-      context.read<HomeCubit>().giveDailyBlessing();
-      await context.read<HomeCubit>().getBlessingCount();
+      // context.read<HomeCubit>().giveDailyBlessing();
+      // await context.read<HomeCubit>().getBlessingCount();
 
       final List<PendingNotificationRequest> pendingNotificationRequests =
           await NotificationService.flutterLocalNotificationsPlugin
@@ -57,21 +57,21 @@ class _CounterScreenState extends State<CounterScreen> {
       nextAward!,
     );
 
-    final blessings = context.watch<HomeCubit>().state.blessingCount;
+    // final blessings = context.watch<HomeCubit>().state.blessingCount;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Home', style: context.textTheme.displayLarge),
-        actions: [
-          Row(
-            children: [
-              Image.asset(AssetIcons.blessingIon, height: 40, width: 40),
-              Text(blessings.toString(), style: context.textTheme.displayLarge),
-              const SizedBox(width: 15),
-            ],
-          ),
-        ],
+        // actions: [
+        //   Row(
+        //     children: [
+        //       Image.asset(AssetIcons.blessingIon, height: 40, width: 40),
+        //       Text(blessings.toString(), style: context.textTheme.displayLarge),
+        //       const SizedBox(width: 15),
+        //     ],
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -82,9 +82,16 @@ class _CounterScreenState extends State<CounterScreen> {
               style: context.textTheme.bodyMedium?.copyWith(fontSize: 25),
             ),
             const SizedBox(height: 10),
-            Text(
-              '$days days',
-              style: context.textTheme.displayLarge?.copyWith(fontSize: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(AssetIcons.fireIcon, height: 40, width: 40),
+                10.width,
+                Text(
+                  '$days D $hours H',
+                  style: context.textTheme.displayLarge?.copyWith(fontSize: 30),
+                ),
+              ],
             ),
             const SizedBox(height: 30),
             Row(
@@ -102,7 +109,18 @@ class _CounterScreenState extends State<CounterScreen> {
               style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
             ),
             const SizedBox(height: 20),
+
             AppCustomButton(
+              onPressed: () {},
+              buttonText: 'Mark as clean day',
+              buttonColor: AppColors.progressBarHighColor,
+              isFullWidth: true,
+            ),
+
+            10.height,
+
+            AppCustomButton(
+              buttonColor: AppColors.progressBarLowColor,
               onPressed: () {
                 context.router.push(const RelapseLogRoute());
               },

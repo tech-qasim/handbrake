@@ -7,6 +7,7 @@ class AssetIcons {
   static const String path = "assets/icons";
   static const String quitIcon = "$path/fist.png";
   static const String blessingIon = "$path/blessing.png";
+  static const String fireIcon = "$path/fire.png";
 }
 
 class SharedPrefStrings {
