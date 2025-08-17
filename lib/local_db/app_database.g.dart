@@ -1240,6 +1240,348 @@ class TriggersCompanion extends UpdateCompanion<Trigger> {
   }
 }
 
+class $CheckInsTable extends CheckIns with TableInfo<$CheckInsTable, CheckIn> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CheckInsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dayMeta = const VerificationMeta('day');
+  @override
+  late final GeneratedColumn<int> day = GeneratedColumn<int>(
+    'day',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _monthYearMeta = const VerificationMeta(
+    'monthYear',
+  );
+  @override
+  late final GeneratedColumn<String> monthYear = GeneratedColumn<String>(
+    'month_year',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isCleanMeta = const VerificationMeta(
+    'isClean',
+  );
+  @override
+  late final GeneratedColumn<bool> isClean = GeneratedColumn<bool>(
+    'is_clean',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_clean" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, date, day, monthYear, isClean];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'check_ins';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CheckIn> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('day')) {
+      context.handle(
+        _dayMeta,
+        day.isAcceptableOrUnknown(data['day']!, _dayMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dayMeta);
+    }
+    if (data.containsKey('month_year')) {
+      context.handle(
+        _monthYearMeta,
+        monthYear.isAcceptableOrUnknown(data['month_year']!, _monthYearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_monthYearMeta);
+    }
+    if (data.containsKey('is_clean')) {
+      context.handle(
+        _isCleanMeta,
+        isClean.isAcceptableOrUnknown(data['is_clean']!, _isCleanMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CheckIn map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CheckIn(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      day: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}day'],
+      )!,
+      monthYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}month_year'],
+      )!,
+      isClean: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_clean'],
+      )!,
+    );
+  }
+
+  @override
+  $CheckInsTable createAlias(String alias) {
+    return $CheckInsTable(attachedDatabase, alias);
+  }
+}
+
+class CheckIn extends DataClass implements Insertable<CheckIn> {
+  final int id;
+  final DateTime date;
+  final int day;
+  final String monthYear;
+  final bool isClean;
+  const CheckIn({
+    required this.id,
+    required this.date,
+    required this.day,
+    required this.monthYear,
+    required this.isClean,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<DateTime>(date);
+    map['day'] = Variable<int>(day);
+    map['month_year'] = Variable<String>(monthYear);
+    map['is_clean'] = Variable<bool>(isClean);
+    return map;
+  }
+
+  CheckInsCompanion toCompanion(bool nullToAbsent) {
+    return CheckInsCompanion(
+      id: Value(id),
+      date: Value(date),
+      day: Value(day),
+      monthYear: Value(monthYear),
+      isClean: Value(isClean),
+    );
+  }
+
+  factory CheckIn.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CheckIn(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      day: serializer.fromJson<int>(json['day']),
+      monthYear: serializer.fromJson<String>(json['monthYear']),
+      isClean: serializer.fromJson<bool>(json['isClean']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
+      'day': serializer.toJson<int>(day),
+      'monthYear': serializer.toJson<String>(monthYear),
+      'isClean': serializer.toJson<bool>(isClean),
+    };
+  }
+
+  CheckIn copyWith({
+    int? id,
+    DateTime? date,
+    int? day,
+    String? monthYear,
+    bool? isClean,
+  }) => CheckIn(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    day: day ?? this.day,
+    monthYear: monthYear ?? this.monthYear,
+    isClean: isClean ?? this.isClean,
+  );
+  CheckIn copyWithCompanion(CheckInsCompanion data) {
+    return CheckIn(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      day: data.day.present ? data.day.value : this.day,
+      monthYear: data.monthYear.present ? data.monthYear.value : this.monthYear,
+      isClean: data.isClean.present ? data.isClean.value : this.isClean,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CheckIn(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('day: $day, ')
+          ..write('monthYear: $monthYear, ')
+          ..write('isClean: $isClean')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, date, day, monthYear, isClean);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CheckIn &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.day == this.day &&
+          other.monthYear == this.monthYear &&
+          other.isClean == this.isClean);
+}
+
+class CheckInsCompanion extends UpdateCompanion<CheckIn> {
+  final Value<int> id;
+  final Value<DateTime> date;
+  final Value<int> day;
+  final Value<String> monthYear;
+  final Value<bool> isClean;
+  const CheckInsCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.day = const Value.absent(),
+    this.monthYear = const Value.absent(),
+    this.isClean = const Value.absent(),
+  });
+  CheckInsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime date,
+    required int day,
+    required String monthYear,
+    this.isClean = const Value.absent(),
+  }) : date = Value(date),
+       day = Value(day),
+       monthYear = Value(monthYear);
+  static Insertable<CheckIn> custom({
+    Expression<int>? id,
+    Expression<DateTime>? date,
+    Expression<int>? day,
+    Expression<String>? monthYear,
+    Expression<bool>? isClean,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (day != null) 'day': day,
+      if (monthYear != null) 'month_year': monthYear,
+      if (isClean != null) 'is_clean': isClean,
+    });
+  }
+
+  CheckInsCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? date,
+    Value<int>? day,
+    Value<String>? monthYear,
+    Value<bool>? isClean,
+  }) {
+    return CheckInsCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      day: day ?? this.day,
+      monthYear: monthYear ?? this.monthYear,
+      isClean: isClean ?? this.isClean,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (day.present) {
+      map['day'] = Variable<int>(day.value);
+    }
+    if (monthYear.present) {
+      map['month_year'] = Variable<String>(monthYear.value);
+    }
+    if (isClean.present) {
+      map['is_clean'] = Variable<bool>(isClean.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CheckInsCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('day: $day, ')
+          ..write('monthYear: $monthYear, ')
+          ..write('isClean: $isClean')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1247,6 +1589,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $JournalsTable journals = $JournalsTable(this);
   late final $StatsTable stats = $StatsTable(this);
   late final $TriggersTable triggers = $TriggersTable(this);
+  late final $CheckInsTable checkIns = $CheckInsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1256,6 +1599,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     journals,
     stats,
     triggers,
+    checkIns,
   ];
 }
 
@@ -1938,6 +2282,194 @@ typedef $$TriggersTableProcessedTableManager =
       Trigger,
       PrefetchHooks Function()
     >;
+typedef $$CheckInsTableCreateCompanionBuilder =
+    CheckInsCompanion Function({
+      Value<int> id,
+      required DateTime date,
+      required int day,
+      required String monthYear,
+      Value<bool> isClean,
+    });
+typedef $$CheckInsTableUpdateCompanionBuilder =
+    CheckInsCompanion Function({
+      Value<int> id,
+      Value<DateTime> date,
+      Value<int> day,
+      Value<String> monthYear,
+      Value<bool> isClean,
+    });
+
+class $$CheckInsTableFilterComposer
+    extends Composer<_$AppDatabase, $CheckInsTable> {
+  $$CheckInsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get day => $composableBuilder(
+    column: $table.day,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get monthYear => $composableBuilder(
+    column: $table.monthYear,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isClean => $composableBuilder(
+    column: $table.isClean,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CheckInsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CheckInsTable> {
+  $$CheckInsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get day => $composableBuilder(
+    column: $table.day,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get monthYear => $composableBuilder(
+    column: $table.monthYear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isClean => $composableBuilder(
+    column: $table.isClean,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CheckInsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CheckInsTable> {
+  $$CheckInsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get day =>
+      $composableBuilder(column: $table.day, builder: (column) => column);
+
+  GeneratedColumn<String> get monthYear =>
+      $composableBuilder(column: $table.monthYear, builder: (column) => column);
+
+  GeneratedColumn<bool> get isClean =>
+      $composableBuilder(column: $table.isClean, builder: (column) => column);
+}
+
+class $$CheckInsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CheckInsTable,
+          CheckIn,
+          $$CheckInsTableFilterComposer,
+          $$CheckInsTableOrderingComposer,
+          $$CheckInsTableAnnotationComposer,
+          $$CheckInsTableCreateCompanionBuilder,
+          $$CheckInsTableUpdateCompanionBuilder,
+          (CheckIn, BaseReferences<_$AppDatabase, $CheckInsTable, CheckIn>),
+          CheckIn,
+          PrefetchHooks Function()
+        > {
+  $$CheckInsTableTableManager(_$AppDatabase db, $CheckInsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CheckInsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CheckInsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CheckInsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<int> day = const Value.absent(),
+                Value<String> monthYear = const Value.absent(),
+                Value<bool> isClean = const Value.absent(),
+              }) => CheckInsCompanion(
+                id: id,
+                date: date,
+                day: day,
+                monthYear: monthYear,
+                isClean: isClean,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime date,
+                required int day,
+                required String monthYear,
+                Value<bool> isClean = const Value.absent(),
+              }) => CheckInsCompanion.insert(
+                id: id,
+                date: date,
+                day: day,
+                monthYear: monthYear,
+                isClean: isClean,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CheckInsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CheckInsTable,
+      CheckIn,
+      $$CheckInsTableFilterComposer,
+      $$CheckInsTableOrderingComposer,
+      $$CheckInsTableAnnotationComposer,
+      $$CheckInsTableCreateCompanionBuilder,
+      $$CheckInsTableUpdateCompanionBuilder,
+      (CheckIn, BaseReferences<_$AppDatabase, $CheckInsTable, CheckIn>),
+      CheckIn,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1950,4 +2482,6 @@ class $AppDatabaseManager {
       $$StatsTableTableManager(_db, _db.stats);
   $$TriggersTableTableManager get triggers =>
       $$TriggersTableTableManager(_db, _db.triggers);
+  $$CheckInsTableTableManager get checkIns =>
+      $$CheckInsTableTableManager(_db, _db.checkIns);
 }

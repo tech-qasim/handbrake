@@ -31,10 +31,10 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
       final products = await select(relapses).get();
       return products;
     } on SqliteException catch (e) {
-      print('SQLite Error: ${e.message}');
+      debugPrint('SQLite Error: ${e.message}');
       return [];
     } catch (e) {
-      print('Unknown error while fetching products: $e');
+      debugPrint('Unknown error while fetching products: $e');
       return [];
     }
   }
@@ -46,10 +46,10 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
       )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
       return relapse; // Could be null if not found, or a product
     } on SqliteException catch (e) {
-      print('SQLite Error while fetching product by ID: ${e.message}');
+      debugPrint('SQLite Error while fetching product by ID: ${e.message}');
       return null;
     } catch (e) {
-      print('Unexpected error: $e');
+      debugPrint('Unexpected error: $e');
       return null;
     }
   }

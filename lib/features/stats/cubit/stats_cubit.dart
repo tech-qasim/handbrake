@@ -20,6 +20,13 @@ class StatsCubit extends Cubit<StatsState> {
     groupRelapsesByMonth();
   }
 
+  Future<void> getCheckinHistoryByMonth(String monthYear) async {
+    final checkinHistory = await getIt<AppDatabase>().checkInDao
+        .getCheckInByMonthYear(monthYear);
+
+    emit(state.copyWith(checkins: checkinHistory));
+  }
+
   void setFocusedDate(DateTime datetime) {
     debugPrint("Emitting focused date: $datetime");
     emit(state.copyWith(focusedDate: datetime));
@@ -38,6 +45,21 @@ class StatsCubit extends Cubit<StatsState> {
     }
 
     emit(state.copyWith(relapseHistoryMap: groupedRelapses));
+  }
+
+  void groupCheckinsByMonth() {
+    final Map<String, List<CheckIn>> groupedCheckins = state.checkinsHistoryMap;
+
+    for (final relapse in state.checkins) {
+      final key = relapse.monthYear;
+
+      if (!groupedCheckins.containsKey(key)) {
+        groupedCheckins[key] = [];
+      }
+      groupedCheckins[key]!.add(relapse);
+    }
+
+    emit(state.copyWith(checkinsHistoryMap: groupedCheckins));
   }
 
   void getTriggerCount() {
@@ -80,6 +102,32 @@ class StatsCubit extends Cubit<StatsState> {
     updatedMap[todayMonthYear] = todayRelapseHistory;
 
     emit(state.copyWith(relapseHistoryMap: updatedMap));
+  }
+
+  void addCheckinToCheckinHistoryMap(CheckIn checkin) {
+    final updatedMap = Map<String, List<CheckIn>>.from(
+      state.checkinsHistoryMap,
+    );
+
+    final todayCheckinHistory = List<CheckIn>.from(
+      updatedMap[todayMonthYear] ?? [],
+    );
+
+    todayCheckinHistory.add(checkin);
+    updatedMap[todayMonthYear] = todayCheckinHistory;
+
+    emit(state.copyWith(checkinsHistoryMap: updatedMap));
+  }
+
+  void updateCheckinHistoryMap(CheckIn checkin) {
+    final updatedCheckins = state.checkinsHistoryMap[checkin.monthYear];
+    final updatedMap = Map<String, List<CheckIn>>.from(
+      state.checkinsHistoryMap,
+    );
+
+    updatedMap[checkin.monthYear] = [...(updatedCheckins ?? []), checkin];
+
+    emit(state.copyWith(checkinsHistoryMap: updatedMap));
   }
 
   void goToPreviousMonth(DateTime firstRelapseTime) {

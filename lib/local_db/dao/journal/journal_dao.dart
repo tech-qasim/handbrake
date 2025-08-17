@@ -37,47 +37,6 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
     }
   }
 
-  //   Future<Relapse?> getRelapseById(int id) async {
-  //     try {
-  //       final relapse = await (select(
-  //         relapses,
-  //       )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
-  //       return relapse; // Could be null if not found, or a product
-  //     } on SqliteException catch (e) {
-  //       print('SQLite Error while fetching product by ID: ${e.message}');
-  //       return null;
-  //     } catch (e) {
-  //       print('Unexpected error: $e');
-  //       return null;
-  //     }
-  //   }
-
-  //   Future<Relapse?> getLastRelapse() async {
-  //     try {
-  //       final relapse =
-  //           await (select(relapses)
-  //                 ..orderBy([(tbl) => OrderingTerm.desc(tbl.id)])
-  //                 ..limit(1))
-  //               .getSingleOrNull();
-  //       return relapse;
-  //     } on SqliteException catch (e) {
-  //       debugPrint('SQLite Error while fetching last relapse: ${e.message}');
-  //       return null;
-  //     } catch (e) {
-  //       debugPrint('Unexpected error: $e');
-  //       return null;
-  //     }
-  //   }
-
-  //   Future<List<Relapse>> getRelapsesByMonth(String monthYear) {
-  //     return (select(
-  //       relapses,
-  //     )..where((t) => t.monthYear.equals(monthYear))).get();
-  //   }
-
-  // Future<bool> updateProduct(Product product) =>
-  //     update(productTable).replace(product.toCompanion());
-
   Future<bool> updateJouralEntry(Journal entry) async {
     try {
       await (update(

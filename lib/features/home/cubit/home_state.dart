@@ -5,6 +5,7 @@ import 'package:handbrake/local_db/app_database.dart';
 
 class HomeState {
   List<Relapse> relapses;
+  List<CheckIn> checkIns;
   DateTime lastRelapseDate;
   DateTime firstRelapseDate;
   int soberCount;
@@ -17,8 +18,10 @@ class HomeState {
   int blessingCount;
   List<String> triggers;
   String reason;
+  CheckIn? latestCheckIn;
   HomeState({
     required this.relapses,
+    required this.checkIns,
     required this.lastRelapseDate,
     required this.firstRelapseDate,
     required this.soberCount,
@@ -31,6 +34,7 @@ class HomeState {
     required this.blessingCount,
     required this.triggers,
     required this.reason,
+    required this.latestCheckIn,
   });
   factory HomeState.initial() {
     return HomeState(
@@ -47,6 +51,8 @@ class HomeState {
       blessingCount: 0,
       triggers: triggersData,
       reason: '',
+      checkIns: [],
+      latestCheckIn: null,
     );
   }
 
@@ -64,6 +70,8 @@ class HomeState {
     int? blessingCount,
     List<String>? triggers,
     String? reason,
+    List<CheckIn>? checkIns,
+    CheckIn? latestCheckIn,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
@@ -81,10 +89,11 @@ class HomeState {
       firstRelapseDate: firstRelapseDate ?? this.firstRelapseDate,
       longestStreakinSeconds:
           longestStreakinSeconds ?? this.longestStreakinSeconds,
-
+      checkIns: checkIns ?? this.checkIns,
       blessingCount: blessingCount ?? this.blessingCount,
       triggers: triggers ?? this.triggers,
       reason: reason ?? this.reason,
+      latestCheckIn: latestCheckIn ?? this.latestCheckIn,
     );
   }
 }

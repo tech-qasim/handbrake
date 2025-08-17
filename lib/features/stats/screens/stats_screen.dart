@@ -9,6 +9,7 @@ import 'package:handbrake/features/home/cubit/home_state.dart';
 import 'package:handbrake/features/stats/cubit/stats_cubit.dart';
 import 'package:handbrake/features/stats/widgets/relapse_reason_graph_widget.dart';
 import 'package:handbrake/features/stats/widgets/stats_card_widget.dart';
+import 'package:handbrake/local_db/tables/stats.dart';
 import 'package:handbrake/routes/app_router.gr.dart';
 import 'package:handbrake/theme/app_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -33,6 +34,7 @@ class _StatsScreenState extends State<StatsScreen> {
     final statsCubit = context.read<StatsCubit>();
 
     await statsCubit.getRelapseHistoryByMonth(date);
+    statsCubit.getCheckinHistoryByMonth(date);
     statsCubit.getTriggerCount();
   }
 
@@ -147,6 +149,11 @@ class RelapseTableCalendarWidget extends StatelessWidget {
         .state
         .relapseHistoryMap;
 
+    final checkinHistoryMap = context
+        .watch<StatsCubit>()
+        .state
+        .checkinsHistoryMap;
+
     final relapseCount =
         context
             .watch<StatsCubit>()
@@ -201,25 +208,35 @@ class RelapseTableCalendarWidget extends StatelessWidget {
                   final date = "${day.year}-${day.month}";
                   final relapseHistoryMapByMonth =
                       relapseHistoryMap[date] ?? [];
-                  if (day == firstRelapseTime.atStartOfDayUtc) {
-                    return GestureDetector(
-                      onTap: () {
-                        context.showSnackBar(
-                          'The day you decided to quit addiction',
-                        );
-                      },
-                      child: Center(
-                        child:
-                            Image.asset(
-                              AssetIcons.quitIcon,
-                              scale: 4,
-                              color: AppColors.whiteColor,
-                            ).circularIconContainer(
-                              backgroundColor: AppColors.primaryColor,
-                            ),
-                      ),
-                    );
+
+                  final checkinHistoryByMonth = checkinHistoryMap[date] ?? [];
+
+                  final isCleanDayExist =
+                      relapseHistoryMapByMonth.isEmpty &&
+                          checkinHistoryByMonth.isEmpty
+                      ? false
+                      : true;
+
+                  if (isCleanDayExist) {
+                    if (checkinHistoryByMonth.isNotEmpty) {
+                      for (final checkin in checkinHistoryByMonth) {
+                        if (checkin.day == day.day) {
+                          return Center(
+                            child:
+                                Text(
+                                  day.day.toString(),
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.whiteColor,
+                                  ),
+                                ).circularIconContainer(
+                                  backgroundColor: Colors.green,
+                                ),
+                          );
+                        }
+                      }
+                    }
                   }
+
                   if (relapseHistoryMapByMonth.isNotEmpty) {
                     for (int i = 0; i < relapseHistoryMapByMonth.length; i++) {
                       final indexedDay = relapseHistoryMapByMonth[i].day;

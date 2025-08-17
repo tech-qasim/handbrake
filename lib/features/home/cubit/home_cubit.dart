@@ -57,6 +57,45 @@ class HomeCubit extends Cubit<HomeState> {
     return recentStreak;
   }
 
+  Future<CheckIn?> addCheckIn(DateTime checkInTime, bool isClean) async {
+    final newCheckIn = CheckInsCompanion(
+      date: Value(checkInTime),
+      isClean: Value(isClean),
+      day: Value(checkInTime.day),
+      monthYear: Value("${checkInTime.year}-${checkInTime.month}"),
+    );
+
+    final result = await getIt<AppDatabase>().checkInDao.insertCheckIn(
+      newCheckIn,
+    );
+    if (result != null) {
+      emit(
+        state.copyWith(
+          checkIns: [...state.checkIns, result],
+          latestCheckIn: result,
+        ),
+      );
+
+      statsCubit.addCheckinToCheckinHistoryMap(result);
+
+      return result;
+    }
+
+    return null;
+  }
+
+  void getCheckInByDay(DateTime datetime) async {
+    final day = datetime.day;
+    final monthYear = "${datetime.year}-${datetime.month}";
+
+    final result = await getIt<AppDatabase>().checkInDao
+        .getCheckInByDayAndMonthYear(day, monthYear);
+
+    if (result != null) {
+      emit(state.copyWith(latestCheckIn: result));
+    }
+  }
+
   void addRelapse(
     DateTime relapseDateTime,
     String trigger,
@@ -75,13 +114,31 @@ class HomeCubit extends Cubit<HomeState> {
 
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 
+    final checkIn = await getIt<AppDatabase>().checkInDao
+        .getCheckInByDayAndMonthYear(date.day, "${date.year}-${date.month}");
+
+    if (checkIn == null) {
+      addCheckIn(DateTime.now(), false);
+    } else {
+      final updatedLatestCheckin = state.latestCheckIn;
+      if (updatedLatestCheckin != null) {
+        final result = await getIt<AppDatabase>().checkInDao.updateCheckIn(
+          updatedLatestCheckin.copyWith(isClean: false),
+        );
+        if (result) {
+          emit(
+            state.copyWith(
+              latestCheckIn: updatedLatestCheckin.copyWith(isClean: false),
+            ),
+          );
+
+          statsCubit.updateCheckinHistoryMap(updatedLatestCheckin);
+        }
+      }
+    }
+
     if (result != null) {
-      emit(
-        state.copyWith(
-          relapses: [...state.relapses, result],
-          lastRelapseDate: result.relapseTime,
-        ),
-      );
+      emit(state.copyWith(lastRelapseDate: result.relapseTime));
 
       resetAndRescheduleNotifications();
       statsCubit.addRelapseToRelapseHistoryMap(result);

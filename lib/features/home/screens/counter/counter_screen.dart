@@ -25,6 +25,7 @@ class _CounterScreenState extends State<CounterScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<HomeCubit>().setReason();
       context.read<HomeCubit>().checkAndShowAchievementDialog(context);
+      context.read<HomeCubit>().getCheckInByDay(DateTime.now());
       // context.read<HomeCubit>().giveDailyBlessing();
       // await context.read<HomeCubit>().getBlessingCount();
 
@@ -57,6 +58,8 @@ class _CounterScreenState extends State<CounterScreen> {
       nextAward!,
     );
 
+    final latestCheckIn = context.watch<HomeCubit>().state.latestCheckIn;
+
     // final blessings = context.watch<HomeCubit>().state.blessingCount;
 
     return Scaffold(
@@ -85,7 +88,7 @@ class _CounterScreenState extends State<CounterScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(AssetIcons.fireIcon, height: 40, width: 40),
+                // Image.asset(AssetIcons.fireIcon, height: 40, width: 40),
                 10.width,
                 Text(
                   '$days D $hours H',
@@ -111,9 +114,24 @@ class _CounterScreenState extends State<CounterScreen> {
             const SizedBox(height: 20),
 
             AppCustomButton(
-              onPressed: () {},
+              onPressed: latestCheckIn != null
+                  ? null
+                  : () {
+                      context
+                          .read<HomeCubit>()
+                          .addCheckIn(DateTime.now(), true)
+                          .then((value) {
+                            if (value != null) {
+                              if (context.mounted) {
+                                context.showSnackBar('Checked-in');
+                              }
+                            }
+                          });
+                    },
               buttonText: 'Mark as clean day',
-              buttonColor: AppColors.progressBarHighColor,
+              buttonColor: latestCheckIn != null
+                  ? AppColors.progressBarHighColor.withOpacity(0.3)
+                  : AppColors.progressBarHighColor,
               isFullWidth: true,
             ),
 
