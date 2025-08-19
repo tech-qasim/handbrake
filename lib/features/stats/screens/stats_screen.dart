@@ -229,7 +229,9 @@ class RelapseTableCalendarWidget extends StatelessWidget {
                                     color: AppColors.whiteColor,
                                   ),
                                 ).circularIconContainer(
-                                  backgroundColor: Colors.green,
+                                  backgroundColor: checkin.isClean
+                                      ? Colors.green
+                                      : Colors.red,
                                 ),
                           );
                         }

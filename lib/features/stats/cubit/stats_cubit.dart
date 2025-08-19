@@ -120,12 +120,21 @@ class StatsCubit extends Cubit<StatsState> {
   }
 
   void updateCheckinHistoryMap(CheckIn checkin) {
-    final updatedCheckins = state.checkinsHistoryMap[checkin.monthYear];
-    final updatedMap = Map<String, List<CheckIn>>.from(
-      state.checkinsHistoryMap,
+    final updatedCheckins = List<CheckIn>.from(
+      state.checkinsHistoryMap[checkin.monthYear] ?? [],
     );
 
-    updatedMap[checkin.monthYear] = [...(updatedCheckins ?? []), checkin];
+    final index = updatedCheckins.indexWhere((c) => c.id == checkin.id);
+    if (index != -1) {
+      updatedCheckins[index] = checkin;
+    } else {
+      updatedCheckins.add(checkin);
+    }
+
+    final updatedMap = {
+      ...state.checkinsHistoryMap,
+      checkin.monthYear: updatedCheckins,
+    };
 
     emit(state.copyWith(checkinsHistoryMap: updatedMap));
   }

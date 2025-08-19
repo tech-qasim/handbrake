@@ -132,7 +132,9 @@ class HomeCubit extends Cubit<HomeState> {
             ),
           );
 
-          statsCubit.updateCheckinHistoryMap(updatedLatestCheckin);
+          statsCubit.updateCheckinHistoryMap(
+            updatedLatestCheckin.copyWith(isClean: false),
+          );
         }
       }
     }
