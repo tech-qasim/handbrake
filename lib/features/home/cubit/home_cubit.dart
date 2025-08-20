@@ -43,6 +43,21 @@ class HomeCubit extends Cubit<HomeState> {
       initializeTimer();
       scheduleNotificationsOnOnboarding();
       giveAwardOnOnboarding();
+
+      final newCheckIn = CheckInsCompanion(
+        date: Value(relapseDateTime),
+        isClean: const Value(false),
+        day: Value(relapseDateTime.day),
+        monthYear: Value("${relapseDateTime.year}-${relapseDateTime.month}"),
+      );
+
+      final response = await getIt<AppDatabase>().checkInDao.insertCheckIn(
+        newCheckIn,
+      );
+
+      if (response != null) {
+        statsCubit.addCheckinToCheckinHistoryMap(response);
+      }
     }
 
     await getIt<SharedPreferences>().setBool(
@@ -114,11 +129,24 @@ class HomeCubit extends Cubit<HomeState> {
 
     final result = await getIt<AppDatabase>().relapseDao.insertRelapse(relapse);
 
+    await _addUpdateCheckInOnRelapse(date);
+
+    if (result != null) {
+      emit(state.copyWith(lastRelapseDate: result.relapseTime));
+
+      resetAndRescheduleNotifications();
+      statsCubit.addRelapseToRelapseHistoryMap(result);
+      statsCubit.getTriggerCount();
+      // setLastRelapseDateTime();
+    }
+  }
+
+  Future<void> _addUpdateCheckInOnRelapse(DateTime date) async {
     final checkIn = await getIt<AppDatabase>().checkInDao
         .getCheckInByDayAndMonthYear(date.day, "${date.year}-${date.month}");
 
     if (checkIn == null) {
-      addCheckIn(DateTime.now(), false);
+      addCheckIn(date, false);
     } else {
       final updatedLatestCheckin = state.latestCheckIn;
       if (updatedLatestCheckin != null) {
@@ -137,15 +165,6 @@ class HomeCubit extends Cubit<HomeState> {
           );
         }
       }
-    }
-
-    if (result != null) {
-      emit(state.copyWith(lastRelapseDate: result.relapseTime));
-
-      resetAndRescheduleNotifications();
-      statsCubit.addRelapseToRelapseHistoryMap(result);
-      statsCubit.getTriggerCount();
-      // setLastRelapseDateTime();
     }
   }
 

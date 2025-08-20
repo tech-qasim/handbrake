@@ -25,6 +25,7 @@ class StatsCubit extends Cubit<StatsState> {
         .getCheckInByMonthYear(monthYear);
 
     emit(state.copyWith(checkins: checkinHistory));
+    groupCheckinsByMonth();
   }
 
   void setFocusedDate(DateTime datetime) {

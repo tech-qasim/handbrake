@@ -211,37 +211,38 @@ class RelapseTableCalendarWidget extends StatelessWidget {
 
                   final checkinHistoryByMonth = checkinHistoryMap[date] ?? [];
 
-                  final isCleanDayExist =
-                      relapseHistoryMapByMonth.isEmpty &&
-                          checkinHistoryByMonth.isEmpty
-                      ? false
-                      : true;
+                  // final isCleanDayExist =
+                  //     relapseHistoryMapByMonth.isEmpty &&
+                  //         checkinHistoryByMonth.isEmpty
+                  //     ? false
+                  //     : true;
 
-                  if (isCleanDayExist) {
-                    if (checkinHistoryByMonth.isNotEmpty) {
-                      for (final checkin in checkinHistoryByMonth) {
-                        if (checkin.day == day.day) {
-                          return Center(
-                            child:
-                                Text(
-                                  day.day.toString(),
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.whiteColor,
-                                  ),
-                                ).circularIconContainer(
-                                  backgroundColor: checkin.isClean
-                                      ? Colors.green
-                                      : Colors.red,
-                                ),
-                          );
-                        }
-                      }
-                    }
-                  }
+                  // if (isCleanDayExist) {
+                  //   if (checkinHistoryByMonth.isNotEmpty) {
+                  //     for (final checkin in checkinHistoryByMonth) {
+                  //       if (checkin.day == day.day) {
+                  //         return Center(
+                  //           child:
+                  //               Text(
+                  //                 day.day.toString(),
+                  //                 style: context.textTheme.bodyMedium?.copyWith(
+                  //                   color: AppColors.whiteColor,
+                  //                 ),
+                  //               ).circularIconContainer(
+                  //                 backgroundColor: checkin.isClean
+                  //                     ? Colors.green
+                  //                     : Colors.red,
+                  //               ),
+                  //         );
+                  //       }
+                  //     }
+                  //   }
+                  // }
 
-                  if (relapseHistoryMapByMonth.isNotEmpty) {
-                    for (int i = 0; i < relapseHistoryMapByMonth.length; i++) {
-                      final indexedDay = relapseHistoryMapByMonth[i].day;
+                  if (checkinHistoryByMonth.isNotEmpty) {
+                    for (int i = 0; i < checkinHistoryByMonth.length; i++) {
+                      final indexedDay = checkinHistoryByMonth[i].day;
+                      final checkIn = checkinHistoryByMonth[i];
 
                       if (indexedDay == day.day) {
                         return GestureDetector(
@@ -261,13 +262,15 @@ class RelapseTableCalendarWidget extends StatelessWidget {
                                     color: AppColors.whiteColor,
                                   ),
                                 ).circularIconContainer(
-                                  backgroundColor: Colors.red,
+                                  backgroundColor: checkIn.isClean
+                                      ? Colors.green
+                                      : Colors.red,
                                 ),
                           ),
                         );
                       }
                     }
-                  } else if (relapseHistoryMapByMonth.isEmpty) {
+                  } else if (checkinHistoryByMonth.isEmpty) {
                     return Center(
                       child: Text(
                         day.day.toString(),
