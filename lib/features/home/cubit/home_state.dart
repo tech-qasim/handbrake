@@ -17,8 +17,13 @@ class HomeState {
   int longestStreakinSeconds;
   int blessingCount;
   List<String> triggers;
+  String urgeStartedReasons;
   String reason;
   CheckIn? latestCheckIn;
+  int onboardingIndex;
+  String relapseTime;
+  String isResistUrge;
+  List<String> actions;
   HomeState({
     required this.relapses,
     required this.checkIns,
@@ -33,11 +38,21 @@ class HomeState {
     required this.longestStreakinSeconds,
     required this.blessingCount,
     required this.triggers,
+    required this.urgeStartedReasons,
     required this.reason,
     required this.latestCheckIn,
+    required this.onboardingIndex,
+    required this.relapseTime,
+    required this.isResistUrge,
+    required this.actions,
   });
   factory HomeState.initial() {
     return HomeState(
+      actions: [],
+      urgeStartedReasons: '',
+      isResistUrge: '',
+      relapseTime: '',
+      onboardingIndex: 0,
       relapses: [],
       lastRelapseDate: DateTime.now(),
       soberCount: 0,
@@ -58,42 +73,48 @@ class HomeState {
 
   HomeState copyWith({
     List<Relapse>? relapses,
+    List<CheckIn>? checkIns,
     DateTime? lastRelapseDate,
+    DateTime? firstRelapseDate,
     int? soberCount,
     Timer? timer,
     Duration? soberTime,
-    String? Function()? selectedTriggerChip,
-    String? Function()? selectedEmotionChip,
+    String? selectedTriggerChip,
+    String? selectedEmotionChip,
     double? urgeIntensity,
-    DateTime? firstRelapseDate,
     int? longestStreakinSeconds,
     int? blessingCount,
     List<String>? triggers,
+    String? urgeStartedReasons,
     String? reason,
-    List<CheckIn>? checkIns,
     CheckIn? latestCheckIn,
+    int? onboardingIndex,
+    String? relapseTime,
+    String? isResistUrge,
+    List<String>? actions,
   }) {
     return HomeState(
       relapses: relapses ?? this.relapses,
+      checkIns: checkIns ?? this.checkIns,
       lastRelapseDate: lastRelapseDate ?? this.lastRelapseDate,
+      firstRelapseDate: firstRelapseDate ?? this.firstRelapseDate,
       soberCount: soberCount ?? this.soberCount,
       timer: timer ?? this.timer,
       soberTime: soberTime ?? this.soberTime,
-      selectedTriggerChip: selectedTriggerChip != null
-          ? selectedTriggerChip()
-          : this.selectedTriggerChip,
-      selectedEmotionChip: selectedEmotionChip != null
-          ? selectedEmotionChip()
-          : this.selectedEmotionChip,
+      selectedTriggerChip: selectedTriggerChip ?? this.selectedTriggerChip,
+      selectedEmotionChip: selectedEmotionChip ?? this.selectedEmotionChip,
       urgeIntensity: urgeIntensity ?? this.urgeIntensity,
-      firstRelapseDate: firstRelapseDate ?? this.firstRelapseDate,
       longestStreakinSeconds:
           longestStreakinSeconds ?? this.longestStreakinSeconds,
-      checkIns: checkIns ?? this.checkIns,
       blessingCount: blessingCount ?? this.blessingCount,
       triggers: triggers ?? this.triggers,
+      urgeStartedReasons: urgeStartedReasons ?? this.urgeStartedReasons,
       reason: reason ?? this.reason,
       latestCheckIn: latestCheckIn ?? this.latestCheckIn,
+      onboardingIndex: onboardingIndex ?? this.onboardingIndex,
+      relapseTime: relapseTime ?? this.relapseTime,
+      isResistUrge: isResistUrge ?? this.isResistUrge,
+      actions: actions ?? this.actions,
     );
   }
 }

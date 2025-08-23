@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -66,15 +67,6 @@ class _CounterScreenState extends State<CounterScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Home', style: context.textTheme.displayLarge),
-        // actions: [
-        //   Row(
-        //     children: [
-        //       Image.asset(AssetIcons.blessingIon, height: 40, width: 40),
-        //       Text(blessings.toString(), style: context.textTheme.displayLarge),
-        //       const SizedBox(width: 15),
-        //     ],
-        //   ),
-        // ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -142,7 +134,7 @@ class _CounterScreenState extends State<CounterScreen> {
               onPressed: () {
                 context.router.push(const RelapseLogRoute());
               },
-              buttonText: 'Relapse',
+              buttonText: 'Record a relapse',
               isFullWidth: true,
             ),
             const SizedBox(height: 20),

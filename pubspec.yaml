@@ -36,6 +36,7 @@ dependencies:
   timezone: ^0.10.1
   flutter_timezone: ^4.1.1
   flutter_launcher_icons: ^0.14.4
+  dots_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_test:

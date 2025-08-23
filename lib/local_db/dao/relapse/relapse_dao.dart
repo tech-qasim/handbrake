@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart' hide Trigger;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:handbrake/local_db/app_database.dart';
 import 'package:handbrake/local_db/tables/relapses.dart';
 import 'package:handbrake/local_db/tables/stats.dart';
@@ -103,6 +103,21 @@ class RelapseDao extends DatabaseAccessor<AppDatabase> with _$RelapseDaoMixin {
       final id = await into(triggers).insert(trigger);
       return (await (select(
         triggers,
+      )..where((tbl) => tbl.id.equals(id))).getSingle());
+    } on SqliteException catch (e) {
+      debugPrint('sqlite error : ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('unknown error occured : $e');
+      return null;
+    }
+  }
+
+  Future<Action?> addNewAction(ActionsCompanion action) async {
+    try {
+      final id = await into(db.actions).insert(action);
+      return (await (select(
+        db.actions,
       )..where((tbl) => tbl.id.equals(id))).getSingle());
     } on SqliteException catch (e) {
       debugPrint('sqlite error : ${e.message}');

@@ -66,6 +66,14 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
+  void setOnboardingIndex(int index) {
+    emit(state.copyWith(onboardingIndex: index));
+  }
+
+  void setRelapseTime(String relapseTime) {
+    emit(state.copyWith(relapseTime: relapseTime));
+  }
+
   int? loadLongestStreak() {
     int? recentStreak =
         getIt<SharedPreferences>().getInt(SharedPrefStrings.longestStreak) ?? 0;
@@ -113,16 +121,20 @@ class HomeCubit extends Cubit<HomeState> {
 
   void addRelapse(
     DateTime relapseDateTime,
+    String relapseHappening,
     String trigger,
-    String emotion,
+    String isResistUrge,
+    String urgeStartedReason,
     double urgeIntensity,
   ) async {
     final date = DateTime.now();
     final relapse = RelapsesCompanion(
       relapseTime: Value(relapseDateTime),
       trigger: Value(trigger),
-      emotion: Value(emotion),
       urgeIntensity: Value(urgeIntensity),
+      relapseHappeningTime: Value(relapseHappening),
+      isResistUrge: Value(isResistUrge),
+      urgeStartedReason: Value(urgeStartedReason),
       day: Value(date.day),
       monthYear: Value("${date.year}-${date.month}"),
     );
@@ -324,12 +336,20 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
+  void setResistUrge(String val) {
+    emit(state.copyWith(isResistUrge: val));
+  }
+
+  void setUrgeStartedReason(String val) {
+    emit(state.copyWith(urgeStartedReasons: val));
+  }
+
   void setTriggerChip(String? trigger) {
-    emit(state.copyWith(selectedTriggerChip: () => trigger));
+    emit(state.copyWith(selectedTriggerChip: trigger));
   }
 
   void setEmotionChip(String? emotion) {
-    emit(state.copyWith(selectedEmotionChip: () => emotion));
+    emit(state.copyWith(selectedEmotionChip: emotion));
   }
 
   void setUrgeIntensity(double val) {
@@ -339,8 +359,13 @@ class HomeCubit extends Cubit<HomeState> {
   void resetRelapseLog() {
     emit(
       state.copyWith(
-        selectedEmotionChip: () => null,
-        selectedTriggerChip: () => null,
+        onboardingIndex: 0,
+        relapseTime: '',
+        isResistUrge: '',
+        urgeStartedReasons: '',
+        urgeIntensity: 1,
+        selectedEmotionChip: '',
+        selectedTriggerChip: '',
       ),
     );
     getTriggers();
@@ -455,6 +480,16 @@ class HomeCubit extends Cubit<HomeState> {
 
     if (result != null) {
       emit(state.copyWith(triggers: [...state.triggers, trigger]));
+    }
+  }
+
+  void addNewAction(String action) async {
+    final result = await getIt<AppDatabase>().relapseDao.addNewAction(
+      ActionsCompanion(action: Value(action)),
+    );
+
+    if (result != null) {
+      emit(state.copyWith(actions: [...state.actions, action]));
     }
   }
 
