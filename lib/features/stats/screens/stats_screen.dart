@@ -192,15 +192,17 @@ class RelapseTableCalendarWidget extends StatelessWidget {
               focusedDay: focusedDate,
               firstDay: firstRelapse,
               lastDay: DateTime.now(),
-
               onPageChanged: (focusedDay) {
                 debugPrint(focusedDay.toString());
                 final date = "${focusedDay.year}-${focusedDay.month}";
 
                 context.read<StatsCubit>().setFocusedDate(focusedDay);
-                if (relapseHistoryMap.containsKey(date)) {
+                if (checkinHistoryMap.containsKey(date) ||
+                    checkinHistoryMap.containsKey(date)) {
                   return;
                 }
+
+                context.read<StatsCubit>().getCheckinHistoryByMonth(date);
                 context.read<StatsCubit>().getRelapseHistoryByMonth(date);
               },
               calendarBuilders: CalendarBuilders(

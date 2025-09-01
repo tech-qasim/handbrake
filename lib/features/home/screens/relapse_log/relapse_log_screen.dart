@@ -72,6 +72,7 @@ class _RelapseLogScreenState extends State<RelapseLogScreen> {
           15.height,
           Expanded(
             child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
               controller: pageController,
               onPageChanged: (int index) {
                 context.read<HomeCubit>().setOnboardingIndex(index);
