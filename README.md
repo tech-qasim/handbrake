@@ -1,4 +1,5 @@
 # Handbrake  
+![App Icon](assets/icons/app_icon.png)
 
 ## 🚀 Overview  
 
